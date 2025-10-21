@@ -1,6 +1,8 @@
 import structure.IBSTData;
 
-// does IBSTDATA need to be here?
+/**
+ * Just class for testing structures, will delete this later, but already using MyInteger (it is the same)
+ */
 public class Book implements IBSTData<Book> {
     private int id;
 
@@ -10,7 +12,6 @@ public class Book implements IBSTData<Book> {
 
     @Override
     public int compareTo(Book comparedBook) {
-//        System.out.println("Compare to book with parameter Book");
         return Integer.compare(this.id, comparedBook.getId());
     }
 

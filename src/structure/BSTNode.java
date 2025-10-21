@@ -1,5 +1,9 @@
 package structure;
 
+/**
+ * Node in Binary Search Tree
+ * @param <T> data stored in node
+ */
 public class BSTNode<T extends IBSTData<T>> {
     private BSTNode<T> parent;
     private BSTNode<T> leftSon;
@@ -43,8 +47,8 @@ public class BSTNode<T extends IBSTData<T>> {
     public boolean isLeftSon() {
         return this.isLeftSon;
     }
-// mozno namiesto atributu iba zistit ci je lavy
-//    public boolean isLeftSon() { return getParent() != null && getParent().getLeftSon() == this; }
+    // mozno namiesto atributu iba zistit ci je lavy
+    //    public boolean isLeftSon() { return getParent() != null && getParent().getLeftSon() == this; }
 
     protected void setIsLeftSon(boolean isLeftSon) {
         this.isLeftSon = isLeftSon;

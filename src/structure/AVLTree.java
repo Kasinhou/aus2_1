@@ -12,6 +12,9 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
 
     @Override
     public boolean insert(T insertedData) {
+        if (insertedData == null) {
+            return false;
+        }
         AVLNode<T> insertedNode = new AVLNode<>(insertedData);
 //        System.out.println(insertedNode.getData());
         if (super.getSize() == 0) {

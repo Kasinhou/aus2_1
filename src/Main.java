@@ -9,6 +9,7 @@ public class Main {
     public static void main(String[] args) {
         BinarySearchTree<Book> books = new BinarySearchTree<>();
         AVLTree<Book> avlbooks = new AVLTree<>();
+        avlbooks.insert(null);
 //        int[] listOfInts = new int[]{20,10,30,25,40,27};
         int[] listOfInts = new int[]{97,70,80,91,55,51,6};
 //        int[] listOfInts = new int[]{40,10,50,5,30,65,20,55,70,15,25,11};
