@@ -3,7 +3,7 @@ package structure;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-// uvedomit si ktore metody/atributy su public/private TODO
+// uvedomit si ktore metody/atributy su public/private (niektore som zatial pouzival na testovanie) TODO: upravit
 public class BinarySearchTree<T extends IBSTData<T>> {
     private BSTNode<T> root;
     private int size = 0;
@@ -50,7 +50,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
 //        System.out.print("Hladany vrchol: " + findData);
 
         while (isNotFound) {
-//            System.out.println("; Porovnavany aktualny vrchol: " + currentNode.getData());
             int result = findData.compareTo(currentNode.getData());
 //            System.out.println(" -> " + result);
 
@@ -60,7 +59,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     currentNode = currentNode.getLeftSon();
                 } else {
                     isNotFound = false;
-//                    System.out.println("chcel som ist dolava ale uz nie je ziadny lavy syn");
                 }
             } else if (result > 0) {
 //                System.out.println("hladany je vacsi ako aktualny = idem doprava");
@@ -68,16 +66,10 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     currentNode = currentNode.getRightSon();
                 } else {
                     isNotFound = false;
-//                    System.out.println("chcel som ist doprava ale uz nie je ziadny pravy syn");
                 }
-            } else { // mozno hned else vetva
-//                System.out.println("hladany je rovnaky ako aktualny = nasiel som vrchol " + currentNode.getData());
-//                isNotFound = false;
+            } else {
                 return currentNode;//.getData();
-            } //else {
-//                System.out.println("Nieco je velmi zle pri find metode!");
-//                return null;
-//            }
+            }
         }
 //        System.out.println("NENAJDENY");
         return null;
@@ -89,8 +81,10 @@ public class BinarySearchTree<T extends IBSTData<T>> {
      * @return true if insert is successfull, false if there is duplicity or insertedData is null TODO Null data??
      */
     public boolean insert(T insertedData) {
+        if (insertedData == null) {
+            return false;
+        }
         BSTNode<T> insertedNode = new BSTNode<>(insertedData);
-//        System.out.println("INSERTEEEEED " + insertedNode.getData());
         if (this.size == 0) {
             this.setRoot(insertedNode);
 //            System.out.println("Setting Root: " + this.root.getData());
@@ -111,10 +105,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 if (currentNode.getLeftSon() != null) {
                     currentNode = currentNode.getLeftSon();
                 } else {
-                    //vlozim
-//                    isNotInserted = false;
                     currentNode.setLeftSon(insertedNode);
-//                    BSTNode<T> hlpNode = currentNode.getLeftSon(); // mozno bez premennej
                     insertedNode.setParent(currentNode);
                     insertedNode.setIsLeftSon(true);
                     ++this.size;
@@ -126,10 +117,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 if (currentNode.getRightSon() != null) {
                     currentNode = currentNode.getRightSon();
                 } else {
-                    //vlozim
-//                    isNotInserted = false;
                     currentNode.setRightSon(insertedNode);
-//                    BSTNode<T> hlpNode = currentNode.getRightSon(); // mozno bez premennej
                     insertedNode.setParent(currentNode);
                     insertedNode.setIsLeftSon(false);
                     ++this.size;
@@ -140,8 +128,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
 //                System.out.println("Vkladane data su uz v strome: DUPLICITA");
                 isNotInserted = false;
 //                return false;
-//            } else {
-//                System.out.println("Daco je velmi zle pri inserte");
             }
         }
         return false;
@@ -154,7 +140,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
      */
     public boolean delete(T deletedData) {
         BSTNode<T> deletedNode = this.find(deletedData);
-//        System.out.println("DELETE");
         if (deletedNode == null) {
 //            System.out.println("Nemozno zmazat vrchol kedze nie je v strome!");
             return false;
@@ -205,7 +190,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
             }
             deletedNodeRightSon.setParent(deletedNodeParent);
         } else {
-            // treba aj druhy pristup alebo nie? ak ma 2 synov tak ma nasledovnika
             // z P podstromu najlavejsi (idem napravo a potom stale nalavo az kym nemam laveho)
             BSTNode<T> nextInOrder = this.nextInOrder(deletedNode);
             BSTNode<T> nextInOrderRightSon = nextInOrder.getRightSon();
@@ -234,6 +218,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 }
             }
         }
+        // is this necessarry??
         deletedNode.setLeftSon(null);
         deletedNode.setRightSon(null);
         deletedNode.setParent(null);
@@ -247,8 +232,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
      * @param currentNode finding successor
      * @return successor
      */
-    // najst nasledovnika of vrcholu, pouzitie v delete, pripadne aj inde ale to potom treba upravit pre list ktory nema dvoch synov
-    // upravit ze ak nema synov tak idem hore az kym nenarazim na prveho predka ktory siel dolava (jeho syn z ktoreho idem je pravy syn)
+    // ak nema synov tak idem hore az kym nenarazim na prveho predka ktory siel dolava (jeho syn z ktoreho idem je pravy syn)
     public BSTNode<T> nextInOrder(BSTNode<T> currentNode) {
         if (currentNode == null) {
             return null;
@@ -292,8 +276,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     currentNode = currentNode.getLeftSon();
                 } else {
                     // ukoncene hladanie, ak je vysledok mensi tak current je tiez mensi a odtialto idem vzostupne
-                    // current je uz prvy prvok, pridat hned?
-//                    interval.add(currentNode.getData());
                     isNotFound = false;
                 }
             } else if (result > 0) {
@@ -307,8 +289,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 }
             } else {
                 isNotFound = false;
-                // ulozim hned minimum a idem na nasledovnika
-//                interval.add(currentNode.getData());
             }
         }
         if (max.compareTo(currentNode.getData()) < 0) {
@@ -325,52 +305,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
             next = this.nextInOrder(next);
         }
         return interval;
-    }
-
-    /**
-     * In order traverse of subtree starting with node given as argument
-     * @param startingNode node where I want to start traverse (only in its subtree)
-     * @return list with data in order from lowest to highest
-     */
-//    TODO porozmyslat ci nie je lepsie definovet inorder pre zaciatok a koniec, ak by boli oba ako null tak z root cely strom, ak nie tak pouzit aj na vyhladanie intervalove
-//    TODO kedze som spravil metodu nextinorder, mozno by bolo fajn ju vyuzit aby nebola duplicita kodu?, lenze to by bola mozno duplicita?
-    public ArrayList<T> inOrder(BSTNode<T> startingNode) {
-//        System.out.println("IN ORDER");
-        ArrayList<T> inOrderList = new ArrayList<>();
-        if (startingNode == null) {
-            System.out.println("Null starting node inorder");
-            return inOrderList;
-        }
-        BSTNode<T> currentNode = startingNode;
-        BSTNode<T> previousNode = null;
-
-        while (currentNode != startingNode.getParent()) {
-            BSTNode<T> newCurrent;
-            if (previousNode == currentNode.getParent()) { // ak idem stale dole na synov, predchodca je parent aktualneho
-                if (currentNode.getLeftSon() != null) {
-                    newCurrent = currentNode.getLeftSon();
-                } else {
-                    inOrderList.add(currentNode.getData());
-                    if (currentNode.getRightSon() != null) {
-                        newCurrent = currentNode.getRightSon();
-                    } else {
-                        newCurrent = currentNode.getParent();
-                    }
-                }
-            } else if (previousNode == currentNode.getLeftSon()) { // ak je previous lavy syn aktualneho
-                inOrderList.add(currentNode.getData());
-                if (currentNode.getRightSon() != null) {
-                    newCurrent = currentNode.getRightSon();
-                } else {
-                    newCurrent = currentNode.getParent();
-                }
-            } else { // ak je previous pravy syn
-                newCurrent = currentNode.getParent();
-            }
-            previousNode = currentNode;
-            currentNode = newCurrent;
-        }
-        return inOrderList;
     }
 
     /**

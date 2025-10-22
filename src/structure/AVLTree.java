@@ -16,7 +16,6 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
             return false;
         }
         AVLNode<T> insertedNode = new AVLNode<>(insertedData);
-//        System.out.println(insertedNode.getData());
         if (super.getSize() == 0) {
             this.setRoot(insertedNode);
             super.increaseSize();
@@ -60,12 +59,10 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
 //        for (Integer i : pathToInserted) {
 //            System.out.print(i + "; ");
 //        }
-//        System.out.println();
         // zmena balance faktorov podla potreby v pathToInserted
         currentNode = insertedNode.getParent();
         AVLNode<T> previousNode = insertedNode;
         while (!pathToInserted.isEmpty()) {
-//        for (int i = pathToInserted.size() - 1; i >= 0; --i) { //using array backwards
             if (pathToInserted.pop() == -1) { // nalavo nakolneny podstrom pod vrcholom
                 currentNode.decreaseBalanceFactor();
             } else {
@@ -308,9 +305,9 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         return true;
     }
 
-    //co ak budem chciet robit rotaciu aj inde ako pri insert a delete???, potom tam treba osetrit bf
+    // TODO: trosku upratat
     public void leftRotation(AVLNode<T> rotatedNode) {
-        if (rotatedNode == null || rotatedNode.getRightSon() == null) { //treba???
+        if (rotatedNode == null || rotatedNode.getRightSon() == null) { //treba right son check???
             System.out.println("Left rotation unsuccessfull");
             return;
         }
