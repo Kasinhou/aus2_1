@@ -1,7 +1,6 @@
 package structure;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
 
@@ -11,59 +10,23 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
 //    kolko metod a atributov je lepsie overridnut a kolko nechat z bst???
 
     @Override
+    protected BSTNode<T> newNode(T data) {
+        return new AVLNode<>(data);
+    }
+
+    @Override
     public boolean insert(T insertedData) {
-        if (insertedData == null) {
+        boolean isInserted = super.insert(insertedData);
+        if (!isInserted) {
             return false;
         }
-        AVLNode<T> insertedNode = new AVLNode<>(insertedData);
-        if (super.getSize() == 0) {
-            this.setRoot(insertedNode);
-            super.increaseSize();
-            return true;
-        }
-        AVLNode<T> currentNode = (AVLNode<T>) super.getRoot();
-        Stack<Integer> pathToInserted = new Stack<>();
-        boolean isNotInserted = true;
-
-        while (isNotInserted) {
-            int result = insertedNode.getData().compareTo(currentNode.getData());
-//            System.out.println(" -> " + result);
-
-            if (result < 0) {
-                pathToInserted.push(-1); // idem dolava, zavazuje na tu stranu
-                if (currentNode.getLeftSon() != null) {
-                    currentNode = currentNode.getLeftSon();
-                } else {
-                    isNotInserted = false;
-                    currentNode.setLeftSon(insertedNode);
-                    insertedNode.setParent(currentNode);
-                    insertedNode.setIsLeftSon(true);
-//                    System.out.println(insertedNode.getData());
-                }
-            } else if (result > 0) {
-                pathToInserted.push(1); // zavazujem vpravo
-                if (currentNode.getRightSon() != null) {
-                    currentNode = currentNode.getRightSon();
-                } else {
-                    isNotInserted = false;
-                    currentNode.setRightSon(insertedNode);
-                    insertedNode.setParent(currentNode);
-                    insertedNode.setIsLeftSon(false);
-                }
-            } else {
-//                System.out.println("vkladany je rovnaky ako aktualny = nasiel som duplicitny vrchol");
-                return false;
-            }
-        }
-        super.increaseSize();
-//        for (Integer i : pathToInserted) {
-//            System.out.print(i + "; ");
-//        }
-        // zmena balance faktorov podla potreby v pathToInserted
-        currentNode = insertedNode.getParent();
+        AVLNode<T> insertedNode = (AVLNode<T>) this.findNode(insertedData);
+        // zmena balance faktorov
+        AVLNode<T> currentNode = insertedNode.getParent();
         AVLNode<T> previousNode = insertedNode;
-        while (!pathToInserted.isEmpty()) {
-            if (pathToInserted.pop() == -1) { // nalavo nakolneny podstrom pod vrcholom
+        while (currentNode != null) {
+//            if (pathToInserted.pop() == -1) { // nalavo nakolneny podstrom pod vrcholom
+            if (previousNode.isLeftSon()) {
                 currentNode.decreaseBalanceFactor();
             } else {
                 currentNode.increaseBalanceFactor();
@@ -131,7 +94,7 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
 
     @Override
     public boolean delete(T deletedData) {
-        AVLNode<T> deletedNode = (AVLNode<T>) this.find(deletedData);
+        AVLNode<T> deletedNode = (AVLNode<T>) this.findNode(deletedData);
         if (deletedNode == null) {
             System.out.println("Nemozno zmazat vrchol kedze nie je v strome!");
             return false;

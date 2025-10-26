@@ -18,28 +18,33 @@ public class Tester {
     }
 
     public static void testRandomOperations() {
-        Random random = new Random();//TODO min, max, intervalove hladanie
+        Random random = new Random();//TODO intervalove hladanie
         for (int s = 0; s < 1; ++s) {
-            long timesBSTInsert = 0, timesBSTDelete = 0, timesBSTFind = 0, timesBSTMin = 0, timesBSTMax = 0;
-            long timesAVLInsert = 0, timesAVLDelete = 0, timesAVLFind = 0, timesAVLMin = 0, timesAVLMax = 0;
-            long timesTreeSetInsert = 0, timesTreeSetDelete = 0, timesTreeSetFind = 0;
-            long timesHashSetInsert = 0, timesHashSetDelete = 0, timesHashSetFind = 0;
-            int countInsert = 0, countDelete = 0, countFind = 0, countMinMax = 0;
+            long timesBSTInsert = 0, timesBSTDelete = 0, timesBSTFind = 0, timesBSTMin = 0, timesBSTMax = 0, timesBSTInterval = 0;
+            long timesAVLInsert = 0, timesAVLDelete = 0, timesAVLFind = 0, timesAVLMin = 0, timesAVLMax = 0, timesAVLInterval = 0;
+            long timesTreeSetInsert = 0, timesTreeSetDelete = 0, timesTreeSetFind = 0, timesTreeSetMin = 0, timesTreeSetMax = 0, timesTreeSetInterval = 0;
+            long timesHashSetInsert = 0, timesHashSetDelete = 0, timesHashSetFind = 0, timesHashSetMin = 0, timesHashSetMax = 0, timesHashSetInterval = 0;
+            int countInsert = 0, countDelete = 0, countFind = 0, countMinMax = 0, countInterval = 0;
             long start, end;
             int max = 0, min = Integer.MAX_VALUE;
+            int minIndex, maxIndex;
             BinarySearchTree<MyInteger> bstree = new BinarySearchTree<>();
             AVLTree<MyInteger> avltree = new AVLTree<>();
             TreeSet<Integer> tSet = new TreeSet<>();
-            HashSet<MyInteger> hSet = new HashSet<>();
-            ArrayList<Integer> insertedToBST = new ArrayList<>();
-            ArrayList<Integer> insertedToAVL = new ArrayList<>();
+            HashSet<Integer> hSet = new HashSet<>();
+            ArrayList<Integer> helpStructures = new ArrayList<>();
             random.setSeed(s);
             for (int i = 0; i < 20000000; ++i) {//20mil
+//                System.out.println(i);
+                if (i % 100000 == 0) {
+                    System.out.println(i);
+                }
                 double r = random.nextDouble();
                 int data = random.nextInt(Integer.MAX_VALUE);
                 MyInteger key = new MyInteger(data);
-                if (r < 0.1) {
-                    if (!insertedToBST.isEmpty()) {
+                //MIN MAX
+                if (r < 0.1) {//0.1
+                    if (!helpStructures.isEmpty()) {
                         ++countMinMax;
                         start = System.nanoTime();
                         int minBST = bstree.findMinimum().getI();
@@ -64,62 +69,71 @@ public class Tester {
                             System.out.println("Seed " + s + ", index " + i + ": MAXIMUM data in BST a AVL: " + maxBST + " " + maxAVL + " was unsuccessfull! :(");
                         }
                     }
-                } else if (r < 0.35) { // hladat aj take co sa tam nenachazaju? Nema zmysel stale, otestovanych par predtym
-                    if (!insertedToBST.isEmpty() && !insertedToAVL.isEmpty()) {
+                // FIND
+                } else if (r < 0.35) {//0.35 // hladat aj take co sa tam nenachazaju? Nema zmysel stale, otestovanych par predtym
+                    if (!helpStructures.isEmpty()) {
                         ++countFind;
-                        int findIndex = random.nextInt(insertedToBST.size());
-                        MyInteger findData = new MyInteger(insertedToBST.get(findIndex));
+                        int findIndex = random.nextInt(helpStructures.size());
+                        MyInteger findData = new MyInteger(helpStructures.get(findIndex));
                         //BST
                         start = System.nanoTime();
-                        BSTNode<MyInteger> findBST = bstree.find(findData);
+                        MyInteger findBST = bstree.find(findData);
                         end = System.nanoTime();
                         timesBSTFind += ((end - start) / 1000000);
                         if (findBST == null) {
-                            System.out.println("Seed " + s + ", index " + i + ": FIND data in BST: " + insertedToBST.get(findIndex) + " was unsuccessfull! :(");
+                            System.out.println("Seed " + s + ", index " + i + ": FIND data in BST: " + helpStructures.get(findIndex) + " was unsuccessfull! :(");
                         }
                         // AVL
                         start = System.nanoTime();
-                        BSTNode<MyInteger> findAVL = avltree.find(findData);
+                        MyInteger findAVL = avltree.find(findData);
                         end = System.nanoTime();
                         timesAVLFind += ((end - start) / 1000000);
                         if (findAVL == null) {
-                            System.out.println("Seed " + s + ", index " + i + ": FIND data in AVL: " + insertedToAVL.get(findIndex) + " was unsuccessfull! :(");
+                            System.out.println("Seed " + s + ", index " + i + ": FIND data in AVL: " + helpStructures.get(findIndex) + " was unsuccessfull! :(");
                         }
                         // TreeSet
                         start = System.nanoTime();
-                        tSet.remove(insertedToBST.get(findIndex));
+                        tSet.contains(helpStructures.get(findIndex));
                         end = System.nanoTime();
                         timesTreeSetFind += ((end - start) / 1000000);
                         // HashSet
                         start = System.nanoTime();
-                        hSet.add(findData);
+                        hSet.contains(helpStructures.get(findIndex));
                         end = System.nanoTime();
                         timesHashSetFind += ((end - start) / 1000000);
-                    } else {
-                        if (insertedToBST.size() != insertedToAVL.size()) {
-                            System.out.println("BST a AVL are not the same size (one is empty)");
-                        }
+//                    } else {
+//                        if (helpStructures.size() != insertedToAVL.size()) { MOZNO porovnat so strukturami
+//                            System.out.println("BST a AVL are not the same size (one is empty)");
+//                        }
                     }
-                } else if (r < 0.45) { // mazat len take ktore su v strukture, inak to nema zmysel, take co nie su stacilo otestovat par pred tym
-                    if (!insertedToBST.isEmpty() && !insertedToAVL.isEmpty()) {
+                // DELETE
+                } else if (r < 0.45) {//0.45 // mazat len take ktore su v strukture, inak to nema zmysel, take co nie su stacilo otestovat par pred tym
+                    if (!helpStructures.isEmpty()) {
                         ++countDelete;
-                        int deletedIndex = random.nextInt(insertedToBST.size());
-                        int dData = insertedToBST.get(deletedIndex);
+                        int deletedIndex = random.nextInt(helpStructures.size());
+                        int dData = helpStructures.get(deletedIndex);
                         MyInteger deletedData = new MyInteger(dData);
                         // BST
                         start = System.nanoTime();
                         boolean deletedBST = bstree.delete(deletedData);
                         end = System.nanoTime();
                         timesBSTDelete += ((end - start) / 1000000);
+                        // AVL
+                        start = System.nanoTime();
+                        boolean deletedAVL = avltree.delete(deletedData);
+                        end = System.nanoTime();
+                        timesAVLDelete += ((end - start) / 1000000);
                         if (!deletedBST) {
-                            System.out.println("Seed " + s + ", index " + i + ": DELETED data in BST: " + insertedToBST.get(deletedIndex) + " was unsuccessfull! :(");
+                            System.out.println("Seed " + s + ", index " + i + ": DELETED data in BST: " + helpStructures.get(deletedIndex) + " was unsuccessfull! :(");
+                        } else if (!deletedAVL) {
+                            System.out.println("Seed " + s + ", index " + i + ": DELETED data in AVL: " + helpStructures.get(deletedIndex) + " was unsuccessfull! :(");
                         } else {
-                            int lastIndex = insertedToBST.size() - 1;
-                            Collections.swap(insertedToBST, deletedIndex, lastIndex);
-                            insertedToBST.remove(lastIndex);
+                            int lastIndex = helpStructures.size() - 1;
+                            Collections.swap(helpStructures, deletedIndex, lastIndex);
+                            helpStructures.remove(lastIndex);
                             if (dData == min) {
                                 min = Integer.MAX_VALUE;
-                                for (int inserted : insertedToBST) {
+                                for (int inserted : helpStructures) {
                                     if (inserted < min) {
                                         min = inserted;
                                     }
@@ -127,40 +141,99 @@ public class Tester {
                             }
                             if (dData == max) {
                                 max = 0;
-                                for (int inserted : insertedToBST) {
+                                for (int inserted : helpStructures) {
                                     if (inserted > max) {
                                         max = inserted;
                                     }
                                 }
                             }
                         }
-                        // AVL
-                        start = System.nanoTime();
-                        boolean deletedAVL = avltree.delete(deletedData);
-                        end = System.nanoTime();
-                        timesAVLDelete += ((end - start) / 1000000);
-                        if (!deletedAVL) {
-                            System.out.println("Seed " + s + ", index " + i + ": DELETED data in AVL: " + insertedToAVL.get(deletedIndex) + " was unsuccessfull! :(");
-                        } else {
-                            int lastIndex = insertedToAVL.size() - 1;
-                            Collections.swap(insertedToAVL, deletedIndex, lastIndex);
-                            insertedToAVL.remove(lastIndex);
-                        }
                         // TreeSet
                         start = System.nanoTime();
-                        tSet.remove(dData);
+                        boolean deletedTSET = tSet.remove(dData);
                         end = System.nanoTime();
+                        if (!deletedTSET) {
+                            System.out.println("NOT REMOVED FROM TSET");
+                        }
                         timesTreeSetDelete += ((end - start) / 1000000);
                         // HashSet
                         start = System.nanoTime();
-                        hSet.add(deletedData);
+                        boolean deletedHSET = hSet.remove(dData);
                         end = System.nanoTime();
-                        timesHashSetDelete += ((end - start) / 1000000);
-                    } else {
-                        if (insertedToBST.size() != insertedToAVL.size()) {
-                            System.out.println("BST a AVL are not the same size (one is empty)");
+                        if (!deletedHSET) {
+                            System.out.println("NOT REMOVED FROM HSET");
                         }
+                        timesHashSetDelete += ((end - start) / 1000000);
+//                    } else {
+//                        if (helpStructures.size() != insertedToAVL.size()) { ZAS mozno porovnat s ostatkom
+//                            System.out.println("BST a AVL are not the same size (one is empty)");
+//                        }
                     }
+                // INTERVAL FIND
+                } else if (r < 0.5) {//0.5
+                    if (!helpStructures.isEmpty()) {
+                        ++countInterval;
+                        // definovat pred usporiadany zoznam ako
+                        Collections.sort(helpStructures);
+                        int bstCount = helpStructures.size();
+                        if (bstCount >= 1000) {
+                            minIndex = random.nextInt(bstCount - 500);
+                            maxIndex = minIndex + 500;
+//                            maxIndex = minIndex + random.nextInt(bstCount - minIndex - 500);
+                        } else {
+                            minIndex = random.nextInt(bstCount);
+                            maxIndex = minIndex + random.nextInt(bstCount - minIndex);
+                        }
+                        MyInteger from = new MyInteger(helpStructures.get(minIndex));
+                        MyInteger to = new MyInteger(helpStructures.get(maxIndex));
+                        start = System.nanoTime();
+                        ArrayList<MyInteger> bstInterval = bstree.findInterval(from, to);
+                        end = System.nanoTime();
+                        timesBSTInterval += ((end - start) / 1000000);
+
+                        if ((maxIndex - minIndex + 1) != bstInterval.size()) {
+                            System.out.println("Seed " + s + ", index " + i + " The BST interval find did not even get the same number of results.");
+                        }
+                        for (int x = minIndex; x <= maxIndex; ++x) {
+                            if (helpStructures.get(x) != bstInterval.get(x - minIndex).getI()) {
+                                System.out.print("Seed " + s + ", index " + i + ": INTERVAL FIND data in BST: " + " was unsuccessfull! :(");
+                                System.out.println(helpStructures.get(x) + " != " + bstInterval.get(x - minIndex).getI());
+                            }
+                        }
+                        // AVL
+                        start = System.nanoTime();
+                        ArrayList<MyInteger> avlInterval = avltree.findInterval(from, to);
+                        end = System.nanoTime();
+                        timesAVLInterval += ((end - start) / 1000000);
+
+                        if ((maxIndex - minIndex + 1) != avlInterval.size()) {
+                            System.out.println("Seed " + s + ", index " + i + " The AVL interval find did not even get the same number of results.");
+                        }
+                        for (int x = minIndex; x <= maxIndex; ++x) {
+                            if (helpStructures.get(x) != avlInterval.get(x - minIndex).getI()) {
+                                System.out.print("Seed " + s + ", index " + i + ": INTERVAL FIND data in AVL: " + " was unsuccessfull! :(");
+                                System.out.println(helpStructures.get(x) + " != " + avlInterval.get(x - minIndex).getI());
+                            }
+                        }
+                        // TreeSet
+                        start = System.nanoTime();
+                        SortedSet<Integer> tSetInterval = tSet.subSet(helpStructures.get(minIndex), true, helpStructures.get(maxIndex), true);
+                        end = System.nanoTime();
+                        timesTreeSetInterval += ((end - start) / 1000000);
+                        if ((maxIndex - minIndex + 1) != tSetInterval.size()) {
+                            System.out.println("Seed " + s + ", index " + i + " The TreeSet interval find did not even get the same number of results.");
+                        }
+                        List<Integer> listTSetInterval = new ArrayList<>(tSetInterval);
+                        for (int x = minIndex; x <= maxIndex; ++x) {
+                            if (!Objects.equals(helpStructures.get(x), listTSetInterval.get(x - minIndex))) {
+                                System.out.print("Seed " + s + ", index " + i + ": INTERVAL FIND data in TreeSet: " + " was unsuccessfull! :(");
+                                System.out.println(helpStructures.get(x) + " != " + listTSetInterval.get(x - minIndex));
+                            }
+                        }
+                        // HashSet
+                        // does not allow
+                    }
+                // INSERT
                 } else {
                     ++countInsert;
                     // BST
@@ -168,30 +241,27 @@ public class Tester {
                     boolean insertedBST = bstree.insert(key);
                     end = System.nanoTime();
                     timesBSTInsert += ((end - start) / 1000000);
+                    // AVL
+                    start = System.nanoTime();
+                    boolean insertedAVL = avltree.insert(key);
+                    end = System.nanoTime();
+                    timesAVLInsert += ((end - start) / 1000000);
                     if (!insertedBST) {
                         if (bstree.find(key) == null) {
                             System.out.println("Seed " + s + ", index " + i + ": INSERT data to BST: " + data + " was unsuccessfull! :(");
                         }
+                    } else if (!insertedAVL) {
+                        if (avltree.find(key) == null) {
+                            System.out.println("Seed " + s + ", index " + i + ": INSERT data to AVL: " + data + " was unsuccessfull! :(");
+                        }
                     } else {
-                        insertedToBST.add(data);
+                        helpStructures.add(data);
                         if (data < min) {
                             min = data;
                         }
                         if (data > max) {
                             max = data;
                         }
-                    }
-                    // AVL
-                    start = System.nanoTime();
-                    boolean insertedAVL = avltree.insert(key);
-                    end = System.nanoTime();
-                    timesAVLInsert += ((end - start) / 1000000);
-                    if (!insertedAVL) {
-                        if (avltree.find(key) == null) {
-                            System.out.println("Seed " + s + ", index " + i + ": INSERT data to AVL: " + data + " was unsuccessfull! :(");
-                        }
-                    } else {
-                        insertedToAVL.add(data);
                     }
                     // TreeSet
                     start = System.nanoTime();
@@ -200,19 +270,17 @@ public class Tester {
                     timesTreeSetInsert += ((end - start) / 1000000);
                     // HashSet
                     start = System.nanoTime();
-                    hSet.add(key);
+                    hSet.add(data);
                     end = System.nanoTime();
                     timesHashSetInsert += ((end - start) / 1000000);
                 }
             }
             // kontrola na konci, velkost rovnaka pri vlozenych a level order
-            if (!insertedToBST.isEmpty()) {
-                if (insertedToBST.size() != bstree.levelOrder(bstree.getRoot()).size()) {
+            if (!helpStructures.isEmpty()) {
+                if (helpStructures.size() != bstree.levelOrder(bstree.getRoot()).size()) {
                     System.out.println("NOT EQUAL SIZE OF INSERTED AND LEVEL ORDER IN BST!");
                 }
-            }
-            if (!insertedToAVL.isEmpty()) {
-                if (insertedToAVL.size() != avltree.levelOrder(avltree.getRoot()).size()) {
+                if (helpStructures.size() != avltree.levelOrder(avltree.getRoot()).size()) {
                     System.out.println("NOT EQUAL SIZE OF INSERTED AND LEVEL ORDER IN AVL!");
                 }
                 // kontrola BF pri AVL
@@ -225,6 +293,14 @@ public class Tester {
                         }
                     }
                 }
+//                for (BSTNode<MyInteger> mi : levelAVL) {
+//                    if (mi instanceof AVLNode<MyInteger>) {
+//                        int bf = ((AVLNode<MyInteger>) mi).getBalanceFactor();
+//                        if (Math.abs(bf) >= 2) {
+//                            System.out.println("BALANCE FACTOR >= 2!!!");
+//                        }
+//                    }
+//                }
             }
             System.out.println("Performance:");
             System.out.println("===============INSERT: count = " + countInsert);
@@ -254,6 +330,15 @@ public class Tester {
             System.out.println("TreeSet average time: " + ((double) timesTreeSetFind / countFind) + " ms.");
             System.out.println("HashSet total time: " + timesHashSetFind + " ms.");
             System.out.println("HashSet average time: " + ((double) timesHashSetFind / countFind) + " ms.");
+            System.out.println("===============FIND INTERVAL: count = " + countInterval);
+            System.out.println("BST total time: " + timesBSTInterval + " ms.");
+            System.out.println("BST average time: " + ((double) timesBSTInterval / countInterval) + " ms.");
+            System.out.println("AVL total time: " + timesAVLInterval + " ms.");
+            System.out.println("AVL average time: " + ((double) timesAVLInterval / countInterval) + " ms.");
+            System.out.println("TreeSet total time: " + timesTreeSetInterval + " ms.");
+            System.out.println("TreeSet average time: " + ((double) timesTreeSetInterval / countInterval) + " ms.");
+            System.out.println("HashSet total time: " + timesHashSetInterval + " ms.");
+            System.out.println("HashSet average time: " + ((double) timesHashSetInterval / countInterval) + " ms.");
             System.out.println("===============MINIMUM: count = " + countMinMax);
             System.out.println("BST total time: " + timesBSTMin + " ms.");
             System.out.println("BST average time: " + ((double) timesBSTMin / countMinMax) + " ms.");
@@ -279,10 +364,9 @@ public class Tester {
         BinarySearchTree<MyInteger> bstree = new BinarySearchTree<>();
         AVLTree<MyInteger> avltree = new AVLTree<>();
         TreeSet<Integer> tSet = new TreeSet<>();
-        HashSet<MyInteger> hSet = new HashSet<>();
+        HashSet<Integer> hSet = new HashSet<>();
 
-        ArrayList<Integer> insertedToBST = new ArrayList<>();
-        ArrayList<Integer> insertedToAVL = new ArrayList<>();
+        ArrayList<Integer> helpStructure = new ArrayList<>();
 
         int limit = 0;
         int count = 0;
@@ -296,21 +380,20 @@ public class Tester {
             boolean bstInsert = bstree.insert(key);
             end = System.nanoTime();
             timesBST += ((end - start) / 1000000);
+            // AVL
+            start = System.nanoTime();
+            boolean avlInsert = avltree.insert(key);
+            end = System.nanoTime();
+            timesAVL += ((end - start) / 1000000);
             if (bstInsert) {
-                insertedToBST.add(data);
+                helpStructure.add(data);
                 ++limit;
             } else {
                 if (bstree.find(key) == null) {
                     System.out.println("False insert in BST! index: " + limit);
                 }
             }
-            // AVL
-            start = System.nanoTime();
-            boolean avlInsert = avltree.insert(key);
-            end = System.nanoTime();
-            timesAVL += ((end - start) / 1000000);
             if (avlInsert) {
-                insertedToAVL.add(data);
                 ++limit;
             } else {
                 if (avltree.find(key) == null) {
@@ -324,7 +407,7 @@ public class Tester {
             timesTreeSet += ((end - start) / 1000000);
             // HashSet
             start = System.nanoTime();
-            hSet.add(key);
+            hSet.add(data);
             end = System.nanoTime();
             timesHashSet += ((end - start) / 1000000);
         }
@@ -352,42 +435,38 @@ public class Tester {
         timesHashSet = 0;
         System.out.println("TESTING DELETE ===========================");
         for (int i = 0; i < 2000000; ++i) {
-            int deletedIndex = random.nextInt(insertedToBST.size());
-            MyInteger deletedData = new MyInteger(insertedToBST.get(deletedIndex));
+            int deletedIndex = random.nextInt(helpStructure.size());
+            MyInteger deletedData = new MyInteger(helpStructure.get(deletedIndex));
+            // TreeSet
+            start = System.nanoTime();
+            tSet.remove(helpStructure.get(deletedIndex));
+            end = System.nanoTime();
+            timesTreeSet += ((end - start) / 1000000);
+            // HashSet
+            start = System.nanoTime();
+            hSet.remove(helpStructure.get(deletedIndex));
+            end = System.nanoTime();
+            timesHashSet += ((end - start) / 1000000);
+            // AVL
+            start = System.nanoTime();
+            boolean avlDelete = avltree.delete(deletedData);
+            end = System.nanoTime();
+            timesAVL += ((end - start) / 1000000);
+            if (!avlDelete) {
+                System.out.println("False delete in AVL! i: " + i + ". Deleted data: " + helpStructure.get(deletedIndex));
+            }
             // BST
             start = System.nanoTime();
             boolean bstDelete = bstree.delete(deletedData);
             end = System.nanoTime();
             timesBST += ((end - start) / 1000000);
             if (bstDelete) {
-                int lastIndex = insertedToBST.size() - 1;
-                Collections.swap(insertedToBST, deletedIndex, lastIndex);
-                insertedToBST.remove(lastIndex);
+                int lastIndex = helpStructure.size() - 1;
+                Collections.swap(helpStructure, deletedIndex, lastIndex);
+                helpStructure.remove(lastIndex);
             } else {
-                System.out.println("False delete in BST! i: " + i + ". Deleted data: " + insertedToBST.get(deletedIndex));
+                System.out.println("False delete in BST! i: " + i + ". Deleted data: " + helpStructure.get(deletedIndex));
             }
-            // TreeSet
-            start = System.nanoTime();
-            tSet.remove(insertedToAVL.get(deletedIndex));
-            end = System.nanoTime();
-            timesTreeSet += ((end - start) / 1000000);
-            // AVL
-            start = System.nanoTime();
-            boolean avlDelete = avltree.delete(deletedData);
-            end = System.nanoTime();
-            timesAVL += ((end - start) / 1000000);
-            if (avlDelete) {
-                int lastIndex = insertedToAVL.size() - 1;
-                Collections.swap(insertedToAVL, deletedIndex, lastIndex);
-                insertedToAVL.remove(lastIndex);
-            } else {
-                System.out.println("False delete in AVL! i: " + i + ". Deleted data: " + insertedToAVL.get(deletedIndex));
-            }
-            // HashSet
-            start = System.nanoTime();
-            hSet.add(deletedData);
-            end = System.nanoTime();
-            timesHashSet += ((end - start) / 1000000);
         }
         // BST
         averageTime = (double) timesBST / 2000000;
@@ -412,32 +491,32 @@ public class Tester {
         timesHashSet = 0;
         System.out.println("TESTING FIND ===========================");
         for (int i = 0; i < 5000000; ++i) {
-            int findIndex = random.nextInt(insertedToBST.size());
-            MyInteger findData = new MyInteger(insertedToBST.get(findIndex));
+            int findIndex = random.nextInt(helpStructure.size());
+            MyInteger findData = new MyInteger(helpStructure.get(findIndex));
             // BST
             start = System.nanoTime();
-            BSTNode<MyInteger> bstFind = bstree.find(findData);
+            MyInteger bstFind = bstree.find(findData);
             end = System.nanoTime();
             timesBST += ((end - start) / 1000000);
             if (bstFind == null) {
-                System.out.println("Null find in BST! i: " + i + ". Find data: " + insertedToBST.get(findIndex));
+                System.out.println("Null find in BST! i: " + i + ". Find data: " + helpStructure.get(findIndex));
             }
             // AVL
             start = System.nanoTime();
-            BSTNode<MyInteger> avlFind = avltree.find(findData);
+            MyInteger avlFind = avltree.find(findData);
             end = System.nanoTime();
             timesAVL += ((end - start) / 1000000);
             if (avlFind == null) {
-                System.out.println("Null find in AVL! i: " + i + ". Find data: " + insertedToAVL.get(findIndex));
+                System.out.println("Null find in AVL! i: " + i + ". Find data: " + helpStructure.get(findIndex));
             }
             // TreeSet
             start = System.nanoTime();
-            tSet.remove(insertedToBST.get(findIndex));
+            tSet.contains(helpStructure.get(findIndex));
             end = System.nanoTime();
             timesTreeSet += ((end - start) / 1000000);
             // HashSet
             start = System.nanoTime();
-            hSet.add(findData);
+            hSet.contains(helpStructure.get(findIndex));
             end = System.nanoTime();
             timesHashSet += ((end - start) / 1000000);
         }
@@ -459,8 +538,7 @@ public class Tester {
         System.out.println("HashSet average time per find: " + averageTime + " ms.");
 
         System.out.println("======================================================");
-        System.out.println("Size should be 8000000 in BST: " + insertedToBST.size());
-        System.out.println("Size should be 8000000 in AVL: " + insertedToAVL.size());
+        System.out.println("Size should be 8000000 in structure: " + helpStructure.size());
         System.out.println("Number of nodes in BST from level order: " + bstree.levelOrder(bstree.getRoot()).size());
         System.out.println("Number of nodes in AVL from level order: " + avltree.levelOrder(bstree.getRoot()).size());
 

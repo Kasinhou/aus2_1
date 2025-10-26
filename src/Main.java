@@ -21,6 +21,10 @@ public class Main {
             for (BSTNode<Book> b : levelBooks) {
                 System.out.print(b.getData().getId() + " ");
             }
+//            ArrayList<Book> levelBooks = avlbooks.levelOrder(avlbooks.getRoot());
+//            for (Book b : levelBooks) {
+//                System.out.print(b.getId() + " ");
+//            }
             System.out.println();
 
         }
