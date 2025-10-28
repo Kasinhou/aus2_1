@@ -27,7 +27,6 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         AVLNode<T> currentNode = insertedNode.getParent();
         AVLNode<T> previousNode = insertedNode;
         while (currentNode != null) {
-//            if (pathToInserted.pop() == -1) { // nalavo nakolneny podstrom pod vrcholom
             if (previousNode.isLeftSon()) {
                 currentNode.decreaseBalanceFactor();
             } else {
@@ -120,101 +119,6 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         if (!isDeleted) {
             return false;
         }
-        // down method of BST
-//        if (deletedNode == null) {
-//            System.out.println("Nemozno zmazat vrchol kedze nie je v strome!");
-//            return false;
-//        }
-//        if (super.getSize() == 1) {
-//            //System.out.println("Mazem koren, a jediny vrchol");
-//            super.setRoot(null);
-//            super.decreaseSize();
-//            return true;
-//        }
-//        AVLNode<T> deletedNodeParent = deletedNode.getParent();
-//        AVLNode<T> deletedNodeLeftSon = deletedNode.getLeftSon();
-//        AVLNode<T> deletedNodeRightSon = deletedNode.getRightSon();
-//        boolean hasLeft = deletedNodeLeftSon != null;
-//        boolean hasRight = deletedNodeRightSon != null;
-//        boolean deletedIsLeftSon = deletedNode.isLeftSon();
-        //                    int deletedNodeBF = deletedNode.getBalanceFactor();
-        //                    // odkial zacnem cestu k vrcholu na vyvazovanie a zmenu bf
-        //                    AVLNode<T> startingNodeToBalance = deletedNodeParent;
-        //                    boolean startingToBalanceFromLeft = deletedIsLeftSon;
-
-//        if (!hasLeft && !hasRight) {
-//            if (deletedIsLeftSon) {
-//                deletedNodeParent.setLeftSon(null);
-//            } else {
-//                deletedNodeParent.setRightSon(null);
-//            }
-//        } else if (hasLeft && !hasRight) {
-//            // nastavit parentovi noveho syna (laveho syna mazaneho), lavemu synovi noveho parenta (mazaneho) + zmazat mazanemu atributy
-//            if (super.getRoot() == deletedNode) { // alebo deletedNodeParent == null)
-//                super.setRoot(deletedNodeLeftSon);
-//            } else {
-//                if (deletedIsLeftSon) {
-//                    deletedNodeParent.setLeftSon(deletedNodeLeftSon);
-//                    deletedNodeLeftSon.setIsLeftSon(true);
-//                } else {
-//                    deletedNodeParent.setRightSon(deletedNodeLeftSon);
-//                    deletedNodeLeftSon.setIsLeftSon(false);
-//                }
-//            }
-//            deletedNodeLeftSon.setParent(deletedNodeParent); // v pripade root je to null
-//        } else if (!hasLeft && hasRight) {
-//            if (super.getRoot() == deletedNode) {
-//                super.setRoot(deletedNodeRightSon);
-//            } else {
-//                if (deletedIsLeftSon) {
-//                    deletedNodeParent.setLeftSon(deletedNodeRightSon);
-//                    deletedNodeRightSon.setIsLeftSon(true);
-//                } else {
-//                    deletedNodeParent.setRightSon(deletedNodeRightSon);
-//                    deletedNodeRightSon.setIsLeftSon(false);
-//                }
-//            }
-//            deletedNodeRightSon.setParent(deletedNodeParent);
-//        } else {
-//            // z P podstromu najlavejsi (idem napravo a potom stale nalavo az kym nema laveho - nasledovnik)
-//            AVLNode<T> nextInOrder = (AVLNode<T>) this.nextInOrder(deletedNode);
-//            AVLNode<T> nextInOrderRightSon = nextInOrder.getRightSon();
-//            AVLNode<T> nextInOrderParent = nextInOrder.getParent();
-
-//            if (nextInOrderParent != deletedNode) {//ak je nasledovnik nizsie ako jedna uroven
-//                nextInOrderParent.setLeftSon(nextInOrderRightSon);
-//                nextInOrder.setRightSon(deletedNodeRightSon);
-//                deletedNodeRightSon.setParent(nextInOrder);
-//                if (nextInOrderRightSon != null) {
-//                    nextInOrderRightSon.setParent(nextInOrderParent);
-//                    nextInOrderRightSon.setIsLeftSon(true);
-//                }
-        //                            startingNodeToBalance = nextInOrderParent;
-        //                            startingToBalanceFromLeft = true;//najlavejsi
-        //            //            } else {//ak je nasledovnik syn mazaneho
-        //                            startingNodeToBalance = nextInOrder;
-        //                            startingToBalanceFromLeft = false;//prvy pravy syn
-        //            //            }
-        //                        nextInOrder.setBalanceFactor(deletedNodeBF);
-//            nextInOrder.setParent(deletedNodeParent);
-//            nextInOrder.setLeftSon(deletedNodeLeftSon);
-//            nextInOrder.setIsLeftSon(deletedIsLeftSon);
-//            deletedNodeLeftSon.setParent(nextInOrder);
-//            if (super.getRoot() == deletedNode) {
-//                super.setRoot(nextInOrder);
-//            } else {
-//                if (deletedIsLeftSon) {
-//                    deletedNodeParent.setLeftSon(nextInOrder);
-//                } else {
-//                    deletedNodeParent.setRightSon(nextInOrder);
-//                }
-//            }
-//        }
-//        deletedNode.setLeftSon(null);
-//        deletedNode.setRightSon(null);
-//        deletedNode.setParent(null);
-//        deletedNode = null;
-//        super.decreaseSize();
 
         // kontrola BF a potrebne vyvazovanie
         AVLNode<T> currentNode = startingNodeToBalance;//pri liste a jednom synovi je to parent mazaneho
