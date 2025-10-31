@@ -24,13 +24,13 @@ public class BinarySearchTree<T extends IBSTData<T>> {
 //        }
     }
 
-    protected void increaseSize() {
-        ++this.size;
-    }
-
-    protected void decreaseSize() {
-        --this.size;
-    }
+//    protected void increaseSize() {
+//        ++this.size;
+//    } mozno nebudem potrebovat ked som pouzil metody z bst v avl
+//
+//    protected void decreaseSize() {
+//        --this.size;
+//    }
 
     public int getSize() {
         return this.size;
@@ -312,7 +312,8 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 isNotFound = false;
             }
         }
-        if (max.compareTo(currentNode.getData()) < 0) {
+
+        if (currentNode == null || max.compareTo(currentNode.getData()) < 0) {
             return interval;
         }
         interval.add(currentNode.getData());
@@ -330,21 +331,22 @@ public class BinarySearchTree<T extends IBSTData<T>> {
 
     /**
      * Level order of Tree
-     * @param startingNode node from where I want to run level order, root of subtree
+//     * @param startingNode node from where I want to run level order, root of subtree
      * @return list of nodes in level order
      */
-    public ArrayList<BSTNode<T>> levelOrder(BSTNode<T> startingNode) {
+    public ArrayList<T> levelOrder() {
         if (this.size == 0) {
             System.out.println("Strom je prazdny.");
             return null;
         }
+        BSTNode<T> startingNode = this.root;
 //        System.out.println("LEVEL ORDER");
-        ArrayList<BSTNode<T>> levelOrderList = new ArrayList<>();
+        ArrayList<T> levelOrderList = new ArrayList<>();
         LinkedList<BSTNode<T>> sons = new LinkedList<>();
         sons.addLast(startingNode);
         while (!sons.isEmpty()) {
             BSTNode<T> first = sons.getFirst();
-            levelOrderList.add(first);
+            levelOrderList.add(first.getData());
             BSTNode<T> leftSon = first.getLeftSon();
             BSTNode<T> rightSon = first.getRightSon();
             if (leftSon != null) { sons.addLast(leftSon); }
@@ -352,6 +354,22 @@ public class BinarySearchTree<T extends IBSTData<T>> {
             sons.removeFirst();
         }
         return levelOrderList;
+    }
+
+    /**
+     * In order traverse of subtree starting with node given as argument
+     * @return list with data in order from lowest to highest
+     */
+//    TODO porozmyslat ci nie je lepsie definovet inorder pre zaciatok a koniec, ak by boli oba ako null tak z root cely strom, ak nie tak pouzit aj na vyhladanie intervalove
+    public ArrayList<T> inOrder() {
+//        System.out.println("IN ORDER");
+        ArrayList<T> inOrderList = new ArrayList<>();
+        BSTNode<T> current = this.findNode(this.findMinimum());
+        while (current != null) {
+            inOrderList.add(current.getData());
+            current = this.nextInOrder(current);
+        }
+        return inOrderList;
     }
 
     /**

@@ -3,10 +3,8 @@ package structure;
 import java.util.ArrayList;
 
 public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
-    private int comparator;
 
-    public AVLTree(int comparator) {
-        this.comparator = comparator;
+    public AVLTree() {
 //        super();
     }
 //    kolko metod a atributov je lepsie overridnut a kolko nechat z bst???
