@@ -254,7 +254,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
      * @return successor
      */
     // ak nema synov tak idem hore az kym nenarazim na prveho predka ktory siel dolava (jeho syn z ktoreho idem je pravy syn)
-    public BSTNode<T> nextInOrder(BSTNode<T> currentNode) {
+    protected BSTNode<T> nextInOrder(BSTNode<T> currentNode) {
         if (currentNode == null) {
             return null;
         }

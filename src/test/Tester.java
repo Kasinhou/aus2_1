@@ -13,17 +13,17 @@ import java.util.*;
  */
 public class Tester {
     public static void main(String[] args) {
-        testRandomOperations();
-//        testOperationsOneByOne();
+//        testRandomOperations();
+        testOperationsOneByOne();
     }
 
     public static void testRandomOperations() {
-        Random random = new Random();//TODO rychlost I.F.
+        Random random = new Random();
         for (int s = 0; s < 1; ++s) {
             long timesBSTInsert = 0, timesBSTDelete = 0, timesBSTFind = 0, timesBSTMin = 0, timesBSTMax = 0, timesBSTInterval = 0;
             long timesAVLInsert = 0, timesAVLDelete = 0, timesAVLFind = 0, timesAVLMin = 0, timesAVLMax = 0, timesAVLInterval = 0;
             long timesTreeSetInsert = 0, timesTreeSetDelete = 0, timesTreeSetFind = 0, timesTreeSetMin = 0, timesTreeSetMax = 0, timesTreeSetInterval = 0;
-            long timesHashSetInsert = 0, timesHashSetDelete = 0, timesHashSetFind = 0, timesHashSetMin = 0, timesHashSetMax = 0, timesHashSetInterval = 0;
+            long timesHashSetInsert = 0, timesHashSetDelete = 0, timesHashSetFind = 0;
             int countInsert = 0, countDelete = 0, countFind = 0, countMinMax = 0, countInterval = 0;
             long start, end;
             int max = 0, min = Integer.MAX_VALUE;
@@ -34,8 +34,7 @@ public class Tester {
             HashSet<Integer> hSet = new HashSet<>();
             ArrayList<Integer> helpStructures = new ArrayList<>();
             random.setSeed(s);
-            for (int i = 0; i < 500000; ++i) {//20mil
-//                System.out.println(i);
+            for (int i = 0; i < 1000000; ++i) {//20mil
                 if (i % 100000 == 0) {
                     System.out.println(i);
                 }
@@ -59,10 +58,6 @@ public class Tester {
                         end = System.nanoTime();
                         timesTreeSetMin += (end - start);
                         start = System.nanoTime();
-                        int minHSet = Collections.min(hSet);
-                        end = System.nanoTime();
-                        timesHashSetMin += (end - start);
-                        start = System.nanoTime();
                         int maxBST = bstree.findMaximum().getI();
                         end = System.nanoTime();
                         timesBSTMax += (end - start);
@@ -74,10 +69,6 @@ public class Tester {
                         int maxTSet = tSet.last();
                         end = System.nanoTime();
                         timesTreeSetMax += (end - start);
-                        start = System.nanoTime();
-                        int maxHSet = Collections.max(hSet);
-                        end = System.nanoTime();
-                        timesHashSetMax += (end - start);
                         if (minBST != min || minAVL != min) {
                             System.out.println("Seed " + s + ", index " + i + ": MINIMUM data in BST a AVL: " + minBST + " " + minAVL + " was unsuccessfull! :(");
                         }
@@ -86,9 +77,6 @@ public class Tester {
                         }
                         if (minTSet != min || maxTSet != max) {
                             System.out.println("Seed " + s + ", index " + i + ": MAXIMUM/MINIMUM data in TreeSet: " + minTSet + " " + maxTSet + " was unsuccessfull! :(");
-                        }
-                        if (minHSet != min || maxHSet != max) {
-                            System.out.println("Seed " + s + ", index " + i + ": MAXIMUM/MINIMUM data in HashSet: " + minHSet + " " + maxHSet + " was unsuccessfull! :(");
                         }
                     }
                 // FIND
@@ -185,10 +173,6 @@ public class Tester {
                             System.out.println("NOT REMOVED FROM HSET");
                         }
                         timesHashSetDelete += (end - start);
-//                    } else {
-//                        if (helpStructures.size() != insertedToAVL.size()) { ZAS mozno porovnat s ostatkom
-//                            System.out.println("BST a AVL are not the same size (one is empty)");
-//                        }
                     }
                 // INTERVAL FIND
                 } else if (r < 0.5) {//0.5
@@ -304,78 +288,87 @@ public class Tester {
                 if (helpStructures.size() != avltree.levelOrder().size()) {
                     System.out.println("NOT EQUAL SIZE OF INSERTED AND LEVEL ORDER IN AVL!");
                 }
-                // kontrola BF pri AVL TODO rekurzia
-//                ArrayList<MyInteger> levelAVL = avltree.levelOrder();
-//                for (MyInteger mi : levelAVL) {
-//                    int bf = mi.getBalanceFactor();
-//                    if (Math.abs(bf) >= 2) {
-//                        System.out.println("BALANCE FACTOR >= 2!!!");
-//                    }
-//                }
-//                for (BSTNode<MyInteger> mi : levelAVL) {
-//                    if (mi instanceof AVLNode<MyInteger>) {
-//                        int bf = ((AVLNode<MyInteger>) mi).getBalanceFactor();
-//                        if (Math.abs(bf) >= 2) {
-//                            System.out.println("BALANCE FACTOR >= 2!!!");
-//                        }
-//                    }
-//                }
-//                for (BSTNode<MyInteger> mi : levelAVL) {
-//                    if (mi instanceof AVLNode<MyInteger>) {
-//                        int bf = ((AVLNode<MyInteger>) mi).getBalanceFactor();
-//                        if (Math.abs(bf) >= 2) {
-//                            System.out.println("BALANCE FACTOR >= 2!!!");
-//                        }
-//                    }
-//                }
+                if (avltree.isNotAVL()) {// Kontrola vlastnosti AVL, ci je naozaj |BF| <= 1
+                    System.out.println("AVL is not really AVL, some node has difference of heights of subtrees more that 1.");
+                } else {
+                    System.out.println("AVL is AVL, all the nodes have |BF| <= 1.");
+                }
+                // Kontrola inorder prehliadky
+                Collections.sort(helpStructures);
+                //BST
+                ArrayList<MyInteger> bstInorder = bstree.inOrder();
+                if (bstInorder.size() != helpStructures.size()) {
+                    System.out.println("BST INORDER does not have the same size as help structure.");
+                    System.out.println(bstInorder.size() + " != " + helpStructures.size());
+                }
+                for (int x = 0; x < helpStructures.size(); ++x) {
+                    if (helpStructures.get(x) != bstInorder.get(x).getI()) {
+                        System.out.print("Index " + x + ": in inorder in BST was unsuccessfull! :(");
+                        System.out.println(helpStructures.get(x) + " != " + bstInorder.get(x).getI());
+                    }
+                }
+                //AVL
+                ArrayList<MyInteger> avlInorder = avltree.inOrder();
+                if (avlInorder.size() != helpStructures.size()) {
+                    System.out.println("AVL INORDER does not have the same size as help structure.");
+                    System.out.println(avlInorder.size() + " != " + helpStructures.size());
+                }
+                for (int x = 0; x < helpStructures.size(); ++x) {
+                    if (helpStructures.get(x) != avlInorder.get(x).getI()) {
+                        System.out.print("Index " + x + ": in inorder in AVL was unsuccessfull! :(");
+                        System.out.println(helpStructures.get(x) + " != " + avlInorder.get(x).getI());
+                    }
+                }
             }
             System.out.println("Performance:");
             System.out.println("===============INSERT: count = " + countInsert);
-            System.out.println("BST total time: " + timesBSTInsert + " ms.");
-            System.out.println("BST average time: " + ((double) timesBSTInsert / countInsert) + " ms.");
-            System.out.println("AVL total time: " + timesAVLInsert + " ms.");
-            System.out.println("AVL average time: " + ((double) timesAVLInsert / countInsert) + " ms.");
-            System.out.println("TreeSet total time: " + timesTreeSetInsert + " ms.");
-            System.out.println("TreeSet average time: " + ((double) timesTreeSetInsert / countInsert) + " ms.");
-            System.out.println("HashSet total time: " + timesHashSetInsert + " ms.");
-            System.out.println("HashSet average time: " + ((double) timesHashSetInsert / countInsert) + " ms.");
+            System.out.println("BST total time: " + timesBSTInsert + " ns.");
+            System.out.println("BST average time: " + ((double) timesBSTInsert / countInsert) + " ns.");
+            System.out.println("AVL total time: " + timesAVLInsert + " ns.");
+            System.out.println("AVL average time: " + ((double) timesAVLInsert / countInsert) + " ns.");
+            System.out.println("TreeSet total time: " + timesTreeSetInsert + " ns.");
+            System.out.println("TreeSet average time: " + ((double) timesTreeSetInsert / countInsert) + " ns.");
+            System.out.println("HashSet total time: " + timesHashSetInsert + " ns.");
+            System.out.println("HashSet average time: " + ((double) timesHashSetInsert / countInsert) + " ns.");
             System.out.println("===============DELETE: count = " + countDelete);
-            System.out.println("BST total time: " + timesBSTDelete + " ms.");
-            System.out.println("BST average time: " + ((double) timesBSTDelete / countDelete) + " ms.");
-            System.out.println("AVL total time: " + timesAVLDelete + " ms.");
-            System.out.println("AVL average time: " + ((double) timesAVLDelete / countDelete) + " ms.");
-            System.out.println("TreeSet total time: " + timesTreeSetDelete + " ms.");
-            System.out.println("TreeSet average time: " + ((double) timesTreeSetDelete / countDelete) + " ms.");
-            System.out.println("HashSet total time: " + timesHashSetDelete + " ms.");
-            System.out.println("HashSet average time: " + ((double) timesHashSetDelete / countDelete) + " ms.");
+            System.out.println("BST total time: " + timesBSTDelete + " ns.");
+            System.out.println("BST average time: " + ((double) timesBSTDelete / countDelete) + " ns.");
+            System.out.println("AVL total time: " + timesAVLDelete + " ns.");
+            System.out.println("AVL average time: " + ((double) timesAVLDelete / countDelete) + " ns.");
+            System.out.println("TreeSet total time: " + timesTreeSetDelete + " ns.");
+            System.out.println("TreeSet average time: " + ((double) timesTreeSetDelete / countDelete) + " ns.");
+            System.out.println("HashSet total time: " + timesHashSetDelete + " ns.");
+            System.out.println("HashSet average time: " + ((double) timesHashSetDelete / countDelete) + " ns.");
             System.out.println("===============FIND: count = " + countFind);
-            System.out.println("BST total time: " + timesBSTFind + " ms.");
-            System.out.println("BST average time: " + ((double) timesBSTFind / countFind) + " ms.");
-            System.out.println("AVL total time: " + timesAVLFind + " ms.");
-            System.out.println("AVL average time: " + ((double) timesAVLFind / countFind) + " ms.");
-            System.out.println("TreeSet total time: " + timesTreeSetFind + " ms.");
-            System.out.println("TreeSet average time: " + ((double) timesTreeSetFind / countFind) + " ms.");
-            System.out.println("HashSet total time: " + timesHashSetFind + " ms.");
-            System.out.println("HashSet average time: " + ((double) timesHashSetFind / countFind) + " ms.");
+            System.out.println("BST total time: " + timesBSTFind + " ns.");
+            System.out.println("BST average time: " + ((double) timesBSTFind / countFind) + " ns.");
+            System.out.println("AVL total time: " + timesAVLFind + " ns.");
+            System.out.println("AVL average time: " + ((double) timesAVLFind / countFind) + " ns.");
+            System.out.println("TreeSet total time: " + timesTreeSetFind + " ns.");
+            System.out.println("TreeSet average time: " + ((double) timesTreeSetFind / countFind) + " ns.");
+            System.out.println("HashSet total time: " + timesHashSetFind + " ns.");
+            System.out.println("HashSet average time: " + ((double) timesHashSetFind / countFind) + " ns.");
             System.out.println("===============FIND INTERVAL: count = " + countInterval);
-            System.out.println("BST total time: " + timesBSTInterval + " ms.");
-            System.out.println("BST average time: " + ((double) timesBSTInterval / countInterval) + " ms.");
-            System.out.println("AVL total time: " + timesAVLInterval + " ms.");
-            System.out.println("AVL average time: " + ((double) timesAVLInterval / countInterval) + " ms.");
-            System.out.println("TreeSet total time: " + timesTreeSetInterval + " ms.");
-            System.out.println("TreeSet average time: " + ((double) timesTreeSetInterval / countInterval) + " ms.");
-            System.out.println("HashSet total time: " + timesHashSetInterval + " ms.");
-            System.out.println("HashSet average time: " + ((double) timesHashSetInterval / countInterval) + " ms.");
+            System.out.println("BST total time: " + timesBSTInterval + " ns.");
+            System.out.println("BST average time: " + ((double) timesBSTInterval / countInterval) + " ns.");
+            System.out.println("AVL total time: " + timesAVLInterval + " ns.");
+            System.out.println("AVL average time: " + ((double) timesAVLInterval / countInterval) + " ns.");
+            System.out.println("TreeSet total time: " + timesTreeSetInterval + " ns.");
+            System.out.println("TreeSet average time: " + ((double) timesTreeSetInterval / countInterval) + " ns.");
             System.out.println("===============MINIMUM: count = " + countMinMax);
-            System.out.println("BST total time: " + timesBSTMin + " ms.");
-            System.out.println("BST average time: " + ((double) timesBSTMin / countMinMax) + " ms.");
-            System.out.println("AVL total time: " + timesAVLMin + " ms.");
-            System.out.println("AVL average time: " + ((double) timesAVLMin / countMinMax) + " ms.");
+            System.out.println("BST total time: " + timesBSTMin + " ns.");
+            System.out.println("BST average time: " + ((double) timesBSTMin / countMinMax) + " ns.");
+            System.out.println("AVL total time: " + timesAVLMin + " ns.");
+            System.out.println("AVL average time: " + ((double) timesAVLMin / countMinMax) + " ns.");
+            System.out.println("TreeSet total time: " + timesTreeSetMin + " ns.");
+            System.out.println("TreeSet average time: " + ((double) timesTreeSetMin / countMinMax) + " ns.");
             System.out.println("===============MAXIMUM: count = " + countMinMax);
-            System.out.println("BST total time: " + timesBSTMax + " ms.");
-            System.out.println("BST average time: " + ((double) timesBSTMax / countMinMax) + " ms.");
-            System.out.println("AVL total time: " + timesAVLMax + " ms.");
-            System.out.println("AVL average time: " + ((double) timesAVLMax / countMinMax) + " ms.");
+            System.out.println("BST total time: " + timesBSTMax + " ns.");
+            System.out.println("BST average time: " + ((double) timesBSTMax / countMinMax) + " ns.");
+            System.out.println("AVL total time: " + timesAVLMax + " ns.");
+            System.out.println("AVL average time: " + ((double) timesAVLMax / countMinMax) + " ns.");
+            System.out.println("TreeSet total time: " + timesTreeSetMax + " ns.");
+            System.out.println("TreeSet average time: " + ((double) timesTreeSetMax / countMinMax) + " ns.");
         }
         System.out.println("SUCCESS - IF NONE INCORRECT MESSAGE IS SHOWN :)");
     }
@@ -407,12 +400,12 @@ public class Tester {
             start = System.nanoTime();
             boolean bstInsert = bstree.insert(key);
             end = System.nanoTime();
-            timesBST += ((end - start) / 1000000);
+            timesBST += (end - start);
             // AVL
             start = System.nanoTime();
             boolean avlInsert = avltree.insert(key);
             end = System.nanoTime();
-            timesAVL += ((end - start) / 1000000);
+            timesAVL += (end - start);
             if (bstInsert) {
                 helpStructure.add(data);
                 ++limit;
@@ -432,30 +425,30 @@ public class Tester {
             start = System.nanoTime();
             tSet.add(data);
             end = System.nanoTime();
-            timesTreeSet += ((end - start) / 1000000);
+            timesTreeSet += (end - start);
             // HashSet
             start = System.nanoTime();
             hSet.add(data);
             end = System.nanoTime();
-            timesHashSet += ((end - start) / 1000000);
+            timesHashSet += (end - start);
         }
         // Vypis priemernej a celkovej rychlosti
         // BST
         double averageTime = (double) timesBST / count;
-        System.out.println("BST 10000000 inserts total time: " + timesBST + " ms.");
-        System.out.println("BST average time per insert: " + averageTime + " ms.");
+        System.out.println("BST 10000000 inserts total time: " + timesBST + " ns.");
+        System.out.println("BST average time per insert: " + averageTime + " ns.");
         // AVL
         averageTime = (double) timesAVL / count;
-        System.out.println("AVL 10000000 inserts total time: " + timesAVL + " ms.");
-        System.out.println("AVL average time per insert: " + averageTime + " ms.");
+        System.out.println("AVL 10000000 inserts total time: " + timesAVL + " ns.");
+        System.out.println("AVL average time per insert: " + averageTime + " ns.");
         // TreeSet
         averageTime = (double) timesTreeSet / count;
-        System.out.println("TreeSet 10000000 inserts total time: " + timesTreeSet + " ms.");
-        System.out.println("TreeSet average time per insert: " + averageTime + " ms.");
+        System.out.println("TreeSet 10000000 inserts total time: " + timesTreeSet + " ns.");
+        System.out.println("TreeSet average time per insert: " + averageTime + " ns.");
         // HashSet
         averageTime = (double) timesHashSet / count;
-        System.out.println("HashSet 10000000 inserts total time: " + timesHashSet + " ms.");
-        System.out.println("HashSet average time per insert: " + averageTime + " ms.");
+        System.out.println("HashSet 10000000 inserts total time: " + timesHashSet + " ns.");
+        System.out.println("HashSet average time per insert: " + averageTime + " ns.");
 
         timesBST = 0;
         timesAVL = 0;
@@ -472,7 +465,7 @@ public class Tester {
             if (!tSetDelete) {
                 System.out.println("False delete in TreeSet! i: " + i + ". Deleted data: " + helpStructure.get(deletedIndex));
             }
-            timesTreeSet += ((end - start) / 1000000);
+            timesTreeSet += (end - start);
             // HashSet
             start = System.nanoTime();
             boolean hSetDelete = hSet.remove(helpStructure.get(deletedIndex));
@@ -480,12 +473,12 @@ public class Tester {
             if (!hSetDelete) {
                 System.out.println("False delete in HashSet! i: " + i + ". Deleted data: " + helpStructure.get(deletedIndex));
             }
-            timesHashSet += ((end - start) / 1000000);
+            timesHashSet += (end - start);
             // AVL
             start = System.nanoTime();
             boolean avlDelete = avltree.delete(deletedData);
             end = System.nanoTime();
-            timesAVL += ((end - start) / 1000000);
+            timesAVL += (end - start);
             if (!avlDelete) {
                 System.out.println("False delete in AVL! i: " + i + ". Deleted data: " + helpStructure.get(deletedIndex));
             }
@@ -493,7 +486,7 @@ public class Tester {
             start = System.nanoTime();
             boolean bstDelete = bstree.delete(deletedData);
             end = System.nanoTime();
-            timesBST += ((end - start) / 1000000);
+            timesBST += (end - start);
             if (bstDelete) {
                 int lastIndex = helpStructure.size() - 1;
                 Collections.swap(helpStructure, deletedIndex, lastIndex);
@@ -504,20 +497,20 @@ public class Tester {
         }
         // BST
         averageTime = (double) timesBST / 2000000;
-        System.out.println("BST 2000000 deletes total time: " + timesBST + " ms.");
-        System.out.println("BST average time per delete: " + averageTime + " ms.");
+        System.out.println("BST 2000000 deletes total time: " + timesBST + " ns.");
+        System.out.println("BST average time per delete: " + averageTime + " ns.");
         // AVL
         averageTime = (double) timesAVL / 2000000;
-        System.out.println("AVL 2000000 deletes total time: " + timesAVL + " ms.");
-        System.out.println("AVL average time per delete: " + averageTime + " ms.");
+        System.out.println("AVL 2000000 deletes total time: " + timesAVL + " ns.");
+        System.out.println("AVL average time per delete: " + averageTime + " ns.");
         // TreeSet
         averageTime = (double) timesTreeSet / 2000000;
-        System.out.println("TreeSet 2000000 deletes total time: " + timesTreeSet + " ms.");
-        System.out.println("TreeSet average time per delete: " + averageTime + " ms.");
+        System.out.println("TreeSet 2000000 deletes total time: " + timesTreeSet + " ns.");
+        System.out.println("TreeSet average time per delete: " + averageTime + " ns.");
         // HashSet
         averageTime = (double) timesHashSet / 2000000;
-        System.out.println("HashSet 2000000 deletes total time: " + timesHashSet + " ms.");
-        System.out.println("HashSet average time per delete: " + averageTime + " ms.");
+        System.out.println("HashSet 2000000 deletes total time: " + timesHashSet + " ns.");
+        System.out.println("HashSet average time per delete: " + averageTime + " ns.");
 
         timesBST = 0;
         timesAVL = 0;
@@ -531,7 +524,7 @@ public class Tester {
             start = System.nanoTime();
             MyInteger bstFind = bstree.find(findData);
             end = System.nanoTime();
-            timesBST += ((end - start) / 1000000);
+            timesBST += (end - start);
             if (bstFind == null) {
                 System.out.println("Null find in BST! i: " + i + ". Find data: " + helpStructure.get(findIndex));
             }
@@ -539,7 +532,7 @@ public class Tester {
             start = System.nanoTime();
             MyInteger avlFind = avltree.find(findData);
             end = System.nanoTime();
-            timesAVL += ((end - start) / 1000000);
+            timesAVL += (end - start);
             if (avlFind == null) {
                 System.out.println("Null find in AVL! i: " + i + ". Find data: " + helpStructure.get(findIndex));
             }
@@ -550,7 +543,7 @@ public class Tester {
             if (!tSetFind) {
                 System.out.println("Not find in TreeSet! i: " + i + ". Find data: " + helpStructure.get(findIndex));
             }
-            timesTreeSet += ((end - start) / 1000000);
+            timesTreeSet += (end - start);
             // HashSet
             start = System.nanoTime();
             boolean hSetFind = hSet.contains(helpStructure.get(findIndex));
@@ -558,24 +551,24 @@ public class Tester {
             if (!hSetFind) {
                 System.out.println("Not find in HashSet! i: " + i + ". Find data: " + helpStructure.get(findIndex));
             }
-            timesHashSet += ((end - start) / 1000000);
+            timesHashSet += (end - start);
         }
         // BST
         averageTime = (double) timesBST / 5000000;
-        System.out.println("BST 5000000 finds total time: " + timesBST + " ms.");
-        System.out.println("BST average time per find: " + averageTime + " ms.");
+        System.out.println("BST 5000000 finds total time: " + timesBST + " ns.");
+        System.out.println("BST average time per find: " + averageTime + " ns.");
         // AVL
         averageTime = (double) timesAVL / 5000000;
-        System.out.println("AVL 5000000 finds total time: " + timesAVL + " ms.");
-        System.out.println("AVL average time per find: " + averageTime + " ms.");
+        System.out.println("AVL 5000000 finds total time: " + timesAVL + " ns.");
+        System.out.println("AVL average time per find: " + averageTime + " ns.");
         // TreeSet
         averageTime = (double) timesTreeSet / 5000000;
-        System.out.println("TreeSet 5000000 finds total time: " + timesTreeSet + " ms.");
-        System.out.println("TreeSet average time per find: " + averageTime + " ms.");
+        System.out.println("TreeSet 5000000 finds total time: " + timesTreeSet + " ns.");
+        System.out.println("TreeSet average time per find: " + averageTime + " ns.");
         // HashSet
         averageTime = (double) timesHashSet / 5000000;
-        System.out.println("HashSet 5000000 finds total time: " + timesHashSet + " ms.");
-        System.out.println("HashSet average time per find: " + averageTime + " ms.");
+        System.out.println("HashSet 5000000 finds total time: " + timesHashSet + " ns.");
+        System.out.println("HashSet average time per find: " + averageTime + " ns.");
 
         timesBST = 0;
         timesAVL = 0;
@@ -597,7 +590,7 @@ public class Tester {
             start = System.nanoTime();
             ArrayList<MyInteger> bstInterval = bstree.findInterval(from, to);
             end = System.nanoTime();
-            timesBST += ((end - start) / 1000000);
+            timesBST += (end - start);
 
             if ((maxIndex - minIndex + 1) != bstInterval.size()) {
                 System.out.println("Index " + i + " The BST interval find did not even get the same number of results.");
@@ -612,7 +605,7 @@ public class Tester {
             start = System.nanoTime();
             ArrayList<MyInteger> avlInterval = avltree.findInterval(from, to);
             end = System.nanoTime();
-            timesAVL += ((end - start) / 1000000);
+            timesAVL += (end - start);
 
             if ((maxIndex - minIndex + 1) != avlInterval.size()) {
                 System.out.println("Index " + i + " The AVL interval find did not even get the same number of results.");
@@ -627,7 +620,7 @@ public class Tester {
             start = System.nanoTime();
             SortedSet<Integer> tSetInterval = tSet.subSet(helpStructure.get(minIndex), true, helpStructure.get(maxIndex), true);
             end = System.nanoTime();
-            timesTreeSet += ((end - start) / 1000000);
+            timesTreeSet += (end - start);
             if ((maxIndex - minIndex + 1) != tSetInterval.size()) {
                 System.out.println("Index " + i + " The TreeSet interval find did not even get the same number of results.");
             }
@@ -641,17 +634,116 @@ public class Tester {
         }
         // BST
         averageTime = (double) timesBST / 1000000;
-        System.out.println("BST 1000000 interval finds total time: " + timesBST + " ms.");
-        System.out.println("BST average time per interval find: " + averageTime + " ms.");
+        System.out.println("BST 1000000 interval finds total time: " + timesBST + " ns.");
+        System.out.println("BST average time per interval find: " + averageTime + " ns.");
         // AVL
         averageTime = (double) timesAVL / 1000000;
-        System.out.println("AVL 1000000 interval finds total time: " + timesAVL + " ms.");
-        System.out.println("AVL average time per interval find: " + averageTime + " ms.");
+        System.out.println("AVL 1000000 interval finds total time: " + timesAVL + " ns.");
+        System.out.println("AVL average time per interval find: " + averageTime + " ns.");
         // TreeSet
         averageTime = (double) timesTreeSet / 1000000;
-        System.out.println("TreeSet 1000000 interval finds total time: " + timesTreeSet + " ms.");
-        System.out.println("TreeSet average time per interval find: " + averageTime + " ms.");
+        System.out.println("TreeSet 1000000 interval finds total time: " + timesTreeSet + " ns.");
+        System.out.println("TreeSet average time per interval find: " + averageTime + " ns.");
 
+        timesBST = 0;
+        timesAVL = 0;
+        timesTreeSet = 0;
+        int min = helpStructure.get(0);
+        System.out.println("TESTING MINIMUM ===========================");
+        for (int i = 0; i < 2000000; ++i) {
+            start = System.nanoTime();
+            int minBST = bstree.findMinimum().getI();
+            end = System.nanoTime();
+            timesBST += (end - start);
+            start = System.nanoTime();
+            int minAVL = avltree.findMinimum().getI();
+            end = System.nanoTime();
+            timesAVL += (end - start);
+            start = System.nanoTime();
+            int minTSet = tSet.first();
+            end = System.nanoTime();
+            timesTreeSet += (end - start);
+            if (minBST != min || minAVL != min || minTSet != min) {
+                System.out.println("Incorrect minimum: " + min + " find in one of the structures. i = " + i);
+            }
+        }
+        // BST
+        averageTime = (double) timesBST / 2000000;
+        System.out.println("BST 2000000 minimum finds total time: " + timesBST + " ns.");
+        System.out.println("BST average time per minimum finds: " + averageTime + " ns.");
+        // AVL
+        averageTime = (double) timesAVL / 2000000;
+        System.out.println("AVL 2000000 minimum finds total time: " + timesAVL + " ns.");
+        System.out.println("AVL average time per minimum find: " + averageTime + " ns.");
+        // TreeSet
+        averageTime = (double) timesTreeSet / 2000000;
+        System.out.println("TreeSet 2000000 minimum finds total time: " + timesTreeSet + " ns.");
+        System.out.println("TreeSet average time per minimum find: " + averageTime + " ns.");
+
+        timesBST = 0;
+        timesAVL = 0;
+        timesTreeSet = 0;
+        int max = helpStructure.get(helpStructure.size() -1);
+        System.out.println("TESTING MAXIMUM ===========================");
+        for (int i = 0; i < 2000000; ++i) {
+            start = System.nanoTime();
+            int maxBST = bstree.findMaximum().getI();
+            end = System.nanoTime();
+            timesBST += (end - start);
+            start = System.nanoTime();
+            int maxAVL = avltree.findMaximum().getI();
+            end = System.nanoTime();
+            timesAVL += (end - start);
+            start = System.nanoTime();
+            int maxTSet = tSet.last();
+            end = System.nanoTime();
+            timesTreeSet += (end - start);
+            if (maxBST != max || maxAVL != max || maxTSet != max) {
+                System.out.println("Incorrect maximum: " + max + " find in one of the structures. i = " + i);
+            }
+        }
+        // BST
+        averageTime = (double) timesBST / 2000000;
+        System.out.println("BST 2000000 maximum finds total time: " + timesBST + " ns.");
+        System.out.println("BST average time per maximum finds: " + averageTime + " ns.");
+        // AVL
+        averageTime = (double) timesAVL / 2000000;
+        System.out.println("AVL 2000000 maximum finds total time: " + timesAVL + " ns.");
+        System.out.println("AVL average time per maximum find: " + averageTime + " ns.");
+        // TreeSet
+        averageTime = (double) timesTreeSet / 2000000;
+        System.out.println("TreeSet 2000000 maximum finds total time: " + timesTreeSet + " ns.");
+        System.out.println("TreeSet average time per maximum find: " + averageTime + " ns.");
+        System.out.println("TESTING INORDER ===========================");
+        //BST
+        ArrayList<MyInteger> bstInorder = bstree.inOrder();
+        if (bstInorder.size() != helpStructure.size()) {
+            System.out.println("BST INORDER does not have the same size as help structure.");
+            System.out.println(bstInorder.size() + " != " + helpStructure.size());
+        }
+        for (int x = 0; x < helpStructure.size(); ++x) {
+            if (helpStructure.get(x) != bstInorder.get(x).getI()) {
+                System.out.print("Index " + x + ": in inorder in BST was unsuccessfull! :(");
+                System.out.println(helpStructure.get(x) + " != " + bstInorder.get(x).getI());
+            }
+        }
+        //AVL
+        ArrayList<MyInteger> avlInorder = avltree.inOrder();
+        if (avlInorder.size() != helpStructure.size()) {
+            System.out.println("AVL INORDER does not have the same size as help structure.");
+            System.out.println(avlInorder.size() + " != " + helpStructure.size());
+        }
+        for (int x = 0; x < helpStructure.size(); ++x) {
+            if (helpStructure.get(x) != avlInorder.get(x).getI()) {
+                System.out.print("Index " + x + ": in inorder in AVL was unsuccessfull! :(");
+                System.out.println(helpStructure.get(x) + " != " + avlInorder.get(x).getI());
+            }
+        }
+        if (avltree.isNotAVL()) {// Kontrola vlastnosti AVL
+            System.out.println("AVL is not really AVL, some node has difference of heights of subtrees more that 1.");
+        } else {
+            System.out.println("AVL is AVL, all the nodes have |BF| <= 1.");
+        }
 
         System.out.println("======================================================");
         System.out.println("Size should be 8000000 in structure: " + helpStructure.size());

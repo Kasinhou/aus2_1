@@ -1,7 +1,5 @@
 package structure;
 
-import java.util.ArrayList;
-
 public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
 
     public AVLTree() {
@@ -267,6 +265,35 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
             rotatedNodeLeftSon.setIsLeftSon(isRotatedLeftSon);
         } else {
             rotatedNodeLeftSon.setIsLeftSon(false);// zas koren, vyriesene na inych urovnach
+        }
+    }
+
+    /**
+     * This method is only to validate real balance of AVL nodes, used only in tester.
+     * Used recursion and post order for computing height of node sons before checking node.
+     */
+    public boolean isNotAVL() {
+        return this.getHeightOfNode((AVLNode<T>) super.getRoot()) == -1;
+    }
+
+    // vrati vysku od vrchola poslaneho parametrom ku najspodnejsiemu listu, ak nie je |BF| <= 1 vrati -1
+    private int getHeightOfNode(AVLNode<T> currentNode) {
+        if (currentNode == null) { // list nema synov, vrati 0
+            return 0;
+        }
+        int leftSonHeight = this.getHeightOfNode(currentNode.getLeftSon());
+        if (leftSonHeight == -1) {// uz nebude AVL
+            return -1;
+        }
+        int rightSonHeight = this.getHeightOfNode(currentNode.getRightSon());
+        if (rightSonHeight == -1) {
+            return -1;
+        }
+
+        if (Math.abs(leftSonHeight - rightSonHeight) >= 2) {// |BF| >= 2
+            return -1;
+        } else {
+            return Math.max(leftSonHeight, rightSonHeight);
         }
     }
 }
