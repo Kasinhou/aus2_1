@@ -9,6 +9,7 @@ import data.TestByRegionDate;
 import data.TestByDate;
 import data.TestByWorkplaceDate;
 
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -98,7 +99,7 @@ public class WHOSystem {
         ArrayList<TestByDate> tests = person.getTestsByDate().inOrder();
         StringBuilder output = new StringBuilder();
         output.append("All tests for person with ID [").append(personID).append("]:\n\nPerson info:\n").append(person.getPersonInfo());
-        output.append("\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -112,7 +113,7 @@ public class WHOSystem {
         ArrayList<TestByDistrictDate> tests = this.positiveTestsByDistrictDate.findInterval(new TestByDistrictDate(dummyTestMin), new TestByDistrictDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
         output.append("All positive tests in district [").append(district).append("] from ").append(from).append(" to ").append(to);
-        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDistrictDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -126,7 +127,7 @@ public class WHOSystem {
         ArrayList<TestByDistrictDate> tests = this.testsByDistrictDate.findInterval(new TestByDistrictDate(dummyTestMin), new TestByDistrictDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
         output.append("All tests in district [").append(district).append("] from ").append(from).append(" to ").append(to);
-        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDistrictDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -140,7 +141,7 @@ public class WHOSystem {
         ArrayList<TestByRegionDate> tests = this.positiveTestsByRegionDate.findInterval(new TestByRegionDate(dummyTestMin), new TestByRegionDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
         output.append("All positive tests in region [").append(region).append("] from ").append(from).append(" to ").append(to);
-        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByRegionDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -154,7 +155,7 @@ public class WHOSystem {
         ArrayList<TestByRegionDate> tests = this.testsByRegionDate.findInterval(new TestByRegionDate(dummyTestMin), new TestByRegionDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
         output.append("All tests in region [").append(region).append("] from ").append(from).append(" to ").append(to);
-        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByRegionDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -168,7 +169,7 @@ public class WHOSystem {
         ArrayList<TestByDate> tests = this.positiveTestsByDate.findInterval(new TestByDate(dummyTestMin), new TestByDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
         output.append("All positive tests from ").append(from).append(" to ").append(to);
-        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -182,7 +183,7 @@ public class WHOSystem {
         ArrayList<TestByDate> tests = this.testsByDate.findInterval(new TestByDate(dummyTestMin), new TestByDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
         output.append("All tests from ").append(from).append(" to ").append(to);
-        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -198,7 +199,7 @@ public class WHOSystem {
 
         StringBuilder output = new StringBuilder();
         output.append("Positive people from district [").append(district).append("] to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
-        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:\n");
+        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:");
         for (TestByDistrictDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());//TODO takto ???
         }
@@ -218,7 +219,7 @@ public class WHOSystem {
 
         StringBuilder output = new StringBuilder();
         output.append("Positive people from region [").append(region).append("] to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
-        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:\n");
+        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:");
         for (TestByRegionDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
         }
@@ -233,7 +234,7 @@ public class WHOSystem {
 
         StringBuilder output = new StringBuilder();
         output.append("Positive people to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
-        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:\n");
+        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:");
         for (TestByDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
         }
@@ -263,7 +264,7 @@ public class WHOSystem {
         ArrayList<TestByWorkplaceDate> tests = this.testsByWorkplace.findInterval(new TestByWorkplaceDate(dummyTestMin), new TestByWorkplaceDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
         output.append("All tests in workplace [").append(workplace).append("] from ").append(from).append(" to ").append(to);
-        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByWorkplaceDate t : tests) {
             output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
@@ -341,13 +342,79 @@ public class WHOSystem {
         return this.people.delete(person);
     }
 
-    // TODO
+    //TODO ulozit aj kraje, okresy, pracoviska,...
     public String saveDataToCSV() {
-        return "Not yet done";
+        ArrayList<Person> peopleToSave = this.people.levelOrder();
+        ArrayList<TestByCode> testsToSave = this.testsByCode.levelOrder();
+        String peopleFileName = "people.csv";
+        String testsFileName = "tests.csv";
+
+        try {
+            PrintWriter peoplePrintWriter = new PrintWriter(new FileWriter(peopleFileName));
+            PrintWriter testsPrintWriter = new PrintWriter(new FileWriter(testsFileName));
+
+            // saving people to csv
+            peoplePrintWriter.println("Name;Surname;Date of birth;person ID");
+            for (Person person : peopleToSave) {
+                peoplePrintWriter.println(person.getData());
+            }
+            peoplePrintWriter.close();
+
+            // saving tests to csv
+            testsPrintWriter.println("Date of test;Person ID;Test code;Workplace;Region;District;Test result;Test value;Note");
+            for (TestByCode test : testsToSave) {
+                testsPrintWriter.println(test.getTest().getData());
+            }
+            testsPrintWriter.close();
+
+            return "People and tests data saved successfully to " + peopleFileName + " and " + testsFileName;
+        } catch (IOException e) {
+            return "Error when saving data: " + e.getMessage();
+        }
     }
 
-    // TODO aj definovat odkial?
-    public String loadDataFromCSV() {
-        return "Not yet done";
+    public String loadDataFromCSV() {//TODO ulozit aj kraje, okresy, pracoviska,...
+        String peopleFileName = "people.csv";
+        String testsFileName = "tests.csv";
+
+        try {
+            BufferedReader peopleReader = new BufferedReader(new FileReader(peopleFileName));
+            BufferedReader testsReader = new BufferedReader(new FileReader(testsFileName));
+
+            // loading people from people.csv
+            String rowPerson;
+            peopleReader.readLine();//header
+            while ((rowPerson = peopleReader.readLine()) != null) {
+                String[] data = rowPerson.split(";");
+                if (data.length == 4) {
+//                    peopleToLoad.add(new Person(data[0], data[1], LocalDate.parse(data[2]), data[3]));
+                    this.addPerson(data[0], data[1], LocalDate.parse(data[2]), data[3]);
+                } else {
+                    System.out.println("Tento riadok osoby je nespravny: " + rowPerson);
+                }
+            }
+            peopleReader.close();
+
+            // loading tests from tests.csv
+            String rowTest;
+            testsReader.readLine();//header
+            while ((rowTest = testsReader.readLine()) != null) {
+                String[] data = rowTest.split(";");
+                if (data.length == 9) {
+                    this.addTestResult(LocalDate.parse(data[0]), data[1], Integer.parseInt(data[2]),
+                            Integer.parseInt(data[3]), Integer.parseInt(data[4]), Integer.parseInt(data[5]),
+                            Boolean.parseBoolean(data[6]), Double.parseDouble(data[7]), data[8]);
+                } else {
+                    System.out.println("Tento riadok testu je nespravny: " + rowTest);
+                }
+            }
+            testsReader.close();
+
+            return "People and tests data load successfully from " + peopleFileName + " and " + testsFileName;
+        } catch (FileNotFoundException e) {
+            return "File was not found: " + e.getMessage();
+        } catch (IOException e) {
+            return "Error when loading data: " + e.getMessage();
+        }
     }
 }

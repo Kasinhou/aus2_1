@@ -54,6 +54,10 @@ public class Person implements IBSTData<Person> {
     }
 
     public String getPersonInfo() {
-        return "Pacient name: " + this.name + " " + this.surname + "\nDate of birth: " + this.dateOfBirth + "\nPacient ID: " + this.personID;
+        return "Patient name: " + this.name + " " + this.surname + "\nDate of birth: " + this.dateOfBirth + "\nPatient ID: " + this.personID;
+    }
+
+    public String getData() {
+        return String.join(";", this.name, this.surname, this.dateOfBirth.toString(), this.personID);
     }
 }

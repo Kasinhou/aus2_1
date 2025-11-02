@@ -19,11 +19,9 @@ public class Generator {
         this.random = new Random();
         this.who = who;
         this.peopleIDs = new ArrayList<>();
-        this.generatePeople(20);
-        this.generateTests(20);
     }
 
-    private void generatePeople(int count) {
+    public void generatePeople(int count) {
         int i = 0;
         String name, surname, personID;
         LocalDate date;
@@ -39,7 +37,7 @@ public class Generator {
         }
     }
 
-    private void generateTests(int count) {
+    public void generateTests(int count) {
         LocalDate timeOfTest;
         String personID;
         int testCode, workplace, region, district;

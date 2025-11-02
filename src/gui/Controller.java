@@ -9,10 +9,12 @@ import java.time.format.DateTimeFormatter;
 public class Controller {
     private WHOSystem who;
     private View view;
+    private Generator generator;
 
     public Controller(WHOSystem who, View view) {
         this.who = who;
         this.view = view;
+        this.generator = new Generator(this.who);
         this.createMainWindow();
     }
 
@@ -139,17 +141,18 @@ public class Controller {
     }
 
     private void handleGenerateButton() {
-        Generator generator = new Generator(this.who);
+        this.generator.generatePeople(20);
+        this.generator.generateTests(100);
     }
 
     private void handleSaveButton() {
         String message = this.who.saveDataToCSV();
-        this.view.getOutputArea().append(message);
+        this.view.getOutputArea().setText(message);
     }
 
     private void handleLoadButton() {
         String message = this.who.loadDataFromCSV();
-        this.view.getOutputArea().append(message);
+        this.view.getOutputArea().setText(message);
     }
 
     private void handleClearButton() {

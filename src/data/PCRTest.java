@@ -78,4 +78,10 @@ public class PCRTest {
         sb.append("\nDistrict: ").append(this.district).append("\nWorkplace: ").append(this.workplace).append("\nNote: ").append(this.note);
         return sb.toString();
     }
+
+    public String getData() {
+        return String.join(";", this.timeOfTest.toString(), this.personID, String.valueOf(this.testCode),
+                String.valueOf(this.workplace), String.valueOf(this.region), String.valueOf(this.district),
+                String.valueOf(this.testResult), String.valueOf(this.testValue), String.valueOf(this.note));
+    }
 }
