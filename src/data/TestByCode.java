@@ -1,3 +1,5 @@
+package data;
+
 import structure.IBSTData;
 
 public class TestByCode implements IBSTData<TestByCode> {

@@ -1,3 +1,5 @@
+package data;
+
 import structure.IBSTData;
 
 import java.time.LocalDate;

@@ -1,16 +1,18 @@
+package data;
+
 import structure.IBSTData;
 
-public class TestsByRegionDate implements IBSTData<TestsByRegionDate> {
+public class TestByWorkplaceDate implements IBSTData<TestByWorkplaceDate> {
     private PCRTest test;
 
-    public TestsByRegionDate(PCRTest test) {
+    public TestByWorkplaceDate(PCRTest test) {
         this.test = test;
     }
     @Override
-    public int compareTo(TestsByRegionDate comparedData) {
-        if (this.test.getRegion() < comparedData.getTest().getRegion()) {
+    public int compareTo(TestByWorkplaceDate comparedData) {
+        if (this.test.getWorkplace() < comparedData.getTest().getWorkplace()) {
             return -1;
-        } else if (this.test.getRegion() > comparedData.getTest().getRegion()) {
+        } else if (this.test.getWorkplace() > comparedData.getTest().getWorkplace()) {
             return 1;
         } else {
             if (this.test.getTimeOfTest().isBefore(comparedData.getTest().getTimeOfTest())) {

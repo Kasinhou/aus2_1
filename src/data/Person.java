@@ -1,3 +1,5 @@
+package data;
+
 import structure.AVLTree;
 import structure.IBSTData;
 
