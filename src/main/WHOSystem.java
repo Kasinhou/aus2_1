@@ -71,19 +71,21 @@ public class WHOSystem {
         return true;
     }
 
-    //2. Vyhľadanie výsledku testu (definovaný kódom PCR testu) pre pacienta (definovaný unikátnym číslom pacienta) a zobrazenie všetkých údajov.TODO navratova hodnota boolean
+    //2. Vyhľadanie výsledku testu (definovaný kódom PCR testu) pre pacienta (definovaný unikátnym číslom pacienta) a zobrazenie všetkých údajov.
     public String showTestResult(int testCode, String personID) {
         Person person = this.people.find(new Person("", "", null, personID));
         if (person == null) {
             System.out.println("Osoba s tymto id sa nenasla");
-            return "Osoba s tymto id sa nenasla";
+            return "Person ID was not found.";
         }
         PCRTest dummyTest = new PCRTest(null, personID, testCode, 0, 0, 0, false, 0.0, null, null);
         TestByCode test = person.getTestsByCode().find(new TestByCode(dummyTest));
         if (test == null) {
-            return "Test s tymto id sa nenasiel";
+            return "Test code was not found.";
         }
-        return person.getPersonInfo() + "\n" + test.getTest().getTestInfo();
+        String message = "Test result with code [" + testCode + "] for person with ID [" + personID + "]:\n\nPerson info:\n";
+        message += person.getPersonInfo() + "\nTest info:\n" + test.getTest().getTestInfo();
+        return message;
     }
 
     //3. Výpis všetkých uskutočnených PCR testov pre daného pacienta (definovaný unikátnym číslom pacienta) usporiadaných podľa dátumu a času ich vykonania.
@@ -91,106 +93,120 @@ public class WHOSystem {
         Person person = this.people.find(new Person("", "", null, personID));
         if (person == null) {
             System.out.println("Osoba s tymto id sa nenasla");
-            return "Osoba neexistuje.";
+            return "Person ID was not found.";
         }
         ArrayList<TestByDate> tests = person.getTestsByDate().inOrder();
         StringBuilder output = new StringBuilder();
-        output.append(person.getPersonInfo());
+        output.append("All tests for person with ID [").append(personID).append("]:\n\nPerson info:\n").append(person.getPersonInfo());
+        output.append("\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
 
-    //4. Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie pre zadaný okres (definovaný kódom okresu). TODO zadane casove obdobie aj cas?
+    //4. Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie pre zadaný okres (definovaný kódom okresu). TODO zadane casove obdobie aj cas? aj pre ostatne
     public String showPositiveTestsInDistrict(int district, LocalDate from, LocalDate to) {
         PCRTest dummyTestMin = new PCRTest(from, null, Integer.MIN_VALUE, 0, 0, district, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(to, null, Integer.MAX_VALUE, 0, 0, district, true, 0.0, null, null);
         ArrayList<TestByDistrictDate> tests = this.positiveTestsByDistrictDate.findInterval(new TestByDistrictDate(dummyTestMin), new TestByDistrictDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
+        output.append("All positive tests in district [").append(district).append("] from ").append(from).append(" to ").append(to);
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByDistrictDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
 
-    //5. Výpis všetkých testov uskutočnených za zadané časové obdobie pre zadaný okres (definovaný kódom okresu). TODO zadane casove obdobie aj cas?
+    //5. Výpis všetkých testov uskutočnených za zadané časové obdobie pre zadaný okres (definovaný kódom okresu).
     public String showAllTestsInDistrict(int district, LocalDate from, LocalDate to) {
         PCRTest dummyTestMin = new PCRTest(from, null, Integer.MIN_VALUE, 0, 0, district, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(to, null, Integer.MAX_VALUE, 0, 0, district, true, 0.0, null, null);
         ArrayList<TestByDistrictDate> tests = this.testsByDistrictDate.findInterval(new TestByDistrictDate(dummyTestMin), new TestByDistrictDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
+        output.append("All tests in district [").append(district).append("] from ").append(from).append(" to ").append(to);
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByDistrictDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
 
-    //6. Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie pre zadaný kraj (definovaný kódom kraja). TODO zadane casove obdobie aj cas?
+    //6. Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie pre zadaný kraj (definovaný kódom kraja).
     public String showPositiveTestsInRegion(int region, LocalDate from, LocalDate to) {
         PCRTest dummyTestMin = new PCRTest(from, null, Integer.MIN_VALUE, 0, region, 0, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(to, null, Integer.MAX_VALUE, 0, region, 0, true, 0.0, null, null);
         ArrayList<TestByRegionDate> tests = this.positiveTestsByRegionDate.findInterval(new TestByRegionDate(dummyTestMin), new TestByRegionDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
+        output.append("All positive tests in region [").append(region).append("] from ").append(from).append(" to ").append(to);
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByRegionDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
 
-    //7. Výpis všetkých testov uskutočnených za zadané časové obdobie pre zadaný kraj (definovaný kódom kraja). TODO zadane casove obdobie aj cas?
+    //7. Výpis všetkých testov uskutočnených za zadané časové obdobie pre zadaný kraj (definovaný kódom kraja).
     public String showAllTestsInRegion(int region, LocalDate from, LocalDate to) {
         PCRTest dummyTestMin = new PCRTest(from, null, Integer.MIN_VALUE, 0, region, 0, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(to, null, Integer.MAX_VALUE, 0, region, 0, true, 0.0, null, null);
         ArrayList<TestByRegionDate> tests = this.testsByRegionDate.findInterval(new TestByRegionDate(dummyTestMin), new TestByRegionDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
+        output.append("All tests in region [").append(region).append("] from ").append(from).append(" to ").append(to);
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByRegionDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
 
-    //8. Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie. TODO zadane casove obdobie aj cas?
+    //8. Výpis všetkých pozitívnych testov uskutočnených za zadané časové obdobie.
     public String showPositiveTests(LocalDate from, LocalDate to) {
         PCRTest dummyTestMin = new PCRTest(from, null, Integer.MIN_VALUE, 0, 0, 0, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(to, null, Integer.MAX_VALUE, 0, 0, 0, true, 0.0, null, null);
         ArrayList<TestByDate> tests = this.positiveTestsByDate.findInterval(new TestByDate(dummyTestMin), new TestByDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
+        output.append("All positive tests from ").append(from).append(" to ").append(to);
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
 
-    //9. Výpis všetkých testov uskutočnených za zadané časové obdobie. TODO zadane casove obdobie aj cas?
+    //9. Výpis všetkých testov uskutočnených za zadané časové obdobie.
     public String showAllTests(LocalDate from, LocalDate to) {
         PCRTest dummyTestMin = new PCRTest(from, null, Integer.MIN_VALUE, 0, 0, 0, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(to, null, Integer.MAX_VALUE, 0, 0, 0, true, 0.0, null, null);
         ArrayList<TestByDate> tests = this.testsByDate.findInterval(new TestByDate(dummyTestMin), new TestByDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
+        output.append("All tests from ").append(from).append(" to ").append(to);
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
 
     //10. Výpis chorých osôb v okrese (definovaný kódom okresu) k zadanému dátumu, pričom osobu považujeme za chorú X dní od pozitívneho testu (X zadá užívateľ).
-    // TODO isto datum od do definovat takto? DOROBIT OSOBU
+    // TODO DOROBIT OSOBU???
     public String showPositivePeopleInDistrict(int district, LocalDate date, int daysAfter) {
         PCRTest dummyTestMin = new PCRTest((date.minusDays(daysAfter)), null, Integer.MIN_VALUE, 0, 0, district, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(date, null, Integer.MAX_VALUE, 0, 0, district, true, 0.0, null, null);
         ArrayList<TestByDistrictDate> tests = this.positiveTestsByDistrictDate.findInterval(new TestByDistrictDate(dummyTestMin), new TestByDistrictDate(dummyTestMax));
 
         StringBuilder output = new StringBuilder();
+        output.append("Positive people from district [").append(district).append("] to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
+        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:\n");
         for (TestByDistrictDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getPerson().getPersonInfo());//TODO vypisane len personID, ja chcem osoby
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());//TODO takto ???
         }
         return output.toString();
     }
 
     //11. Výpis chorých osôb v okrese (definovaný kódom okresu) k zadanému dátumu, pričom osobu považujeme za chorú X dní od pozitívneho testu (X zadá užívateľ), pričom choré osoby sú usporiadané podľa hodnoty testu.
     public String showPositivePeopleInDistrictInOrder(int district, LocalDate date, int daysAfter) {
-//        this.positiveTestsByDistrictDate
         return this.showPositivePeopleInDistrict(district, date, daysAfter);
     }
 
@@ -201,8 +217,10 @@ public class WHOSystem {
         ArrayList<TestByRegionDate> tests = this.positiveTestsByRegionDate.findInterval(new TestByRegionDate(dummyTestMin), new TestByRegionDate(dummyTestMax));
 
         StringBuilder output = new StringBuilder();
+        output.append("Positive people from region [").append(region).append("] to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
+        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:\n");
         for (TestByRegionDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getPerson().getPersonInfo());//TODO vypisane len personID, ja chcem osoby
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
         }
         return output.toString();
     }
@@ -214,8 +232,10 @@ public class WHOSystem {
         ArrayList<TestByDate> tests = this.positiveTestsByDate.findInterval(new TestByDate(dummyTestMin), new TestByDate(dummyTestMax));
 
         StringBuilder output = new StringBuilder();
+        output.append("Positive people to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
+        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:\n");
         for (TestByDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getPerson().getPersonInfo());//TODO vypisane len personID, ja chcem osoby
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
         }
         return output.toString();
     }
@@ -237,14 +257,15 @@ public class WHOSystem {
     }
 
     //17. Výpis všetkých testov uskutočnených za zadané časové obdobie na danom pracovisku (definované kódom pracoviska).
-    // TODO aj cas
     public String showAllTestsInWorkspace(LocalDate from, LocalDate to, int workplace) {
         PCRTest dummyTestMin = new PCRTest(from, null, Integer.MIN_VALUE, workplace, 0, 0, false, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(to, null, Integer.MAX_VALUE, workplace, 0, 0, false, 0.0, null, null);
         ArrayList<TestByWorkplaceDate> tests = this.testsByWorkplace.findInterval(new TestByWorkplaceDate(dummyTestMin), new TestByWorkplaceDate(dummyTestMax));
         StringBuilder output = new StringBuilder();
+        output.append("All tests in workplace [").append(workplace).append("] from ").append(from).append(" to ").append(to);
+        output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:\n");
         for (TestByWorkplaceDate t : tests) {
-            output.append("\n====================\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
@@ -254,18 +275,17 @@ public class WHOSystem {
         PCRTest dummyTest = new PCRTest(null, null, testCode, 0, 0, 0, false, 0.0, null, null);
         TestByCode test = this.testsByCode.find(new TestByCode(dummyTest));
         if (test == null) {
-            return "Test s takymto kodom sa nenasiel";
+            return "Test code was not found.";
         }
-        return test.getTest().getTestInfo();
+        return "Test info for test with code [" + testCode + "]:\n" + test.getTest().getTestInfo();
     }
 
     //19. Vloženie osoby do systému.
-    // TODO este predtym generovanie ID? treba?
     public boolean addPerson(String name, String surname, LocalDate dateOfBirth, String personID) {
         Person person = new Person(name, surname, dateOfBirth, personID);
         boolean inserted = this.people.insert(person);
         if (!inserted) {
-            System.out.println("osoba sa tam uz ocividne nachadza, teda person id");
+            System.out.println("Person with this ID is already in the system.");
             return false;
         }
         System.out.println(person.getPersonInfo());
@@ -294,7 +314,7 @@ public class WHOSystem {
             boolean delFromPosRegionDate = this.positiveTestsByRegionDate.delete(new TestByRegionDate(removedTest));
             boolean delFromPosDate = this.positiveTestsByDate.delete(new TestByDate(removedTest));
             if (!delFromPosDistrictDate || !delFromPosRegionDate || !delFromPosDate) {
-                System.out.println("VELMI ZLE NIECO S MAZANIM");
+                System.out.println("Something is wrong with deletion of test.");
                 return false;
             }
         }
@@ -308,12 +328,12 @@ public class WHOSystem {
     public boolean removePersonAndTests(String personID) {
         Person person = this.people.find(new Person("","",null, personID));
         if (person == null) {
-            System.out.println("Osoba sa nenasla");
+            System.out.println("Person with this ID was not found.");
             return false;
         }
         ArrayList<TestByCode> personsTest = person.getTestsByCode().levelOrder();
         for (int i = personsTest.size() - 1; i >= 0; --i) {
-            if (this.removeTest(personsTest.get(i).getTest().getTestCode())) {
+            if (!this.removeTest(personsTest.get(i).getTest().getTestCode())) {
                 System.out.println("Mazanie nejakeho testu neprebehlo uspesne " + i);
                 return false;
             }

@@ -115,20 +115,27 @@ public class Controller {
                 boolean correctAddPerson = this.who.addPerson(this.view.getPersonName(), this.view.getPersonSurname(),
                         LocalDate.parse(this.view.getPersonBirthday().trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                         this.view.getPersonID());
-                message = correctAddPerson ? "Successfully added person." : "Unsuccessfully added - probably duplicity.";
+                message = correctAddPerson
+                        ? "Successfully added person with id [" + this.view.getPersonID() + "]."
+                        : "Unsuccessfully added - person with id [" + this.view.getPersonID() + "] is already in the system.";
                 break;
             case 20:
                 boolean correctDeletedTest = this.who.removeTest(Integer.parseInt(this.view.getTestCode()));
-                message = correctDeletedTest ? "Successfully deleted test." : "Unsuccessfully deleted test.";
+                message = correctDeletedTest
+                        ? "Successfully deleted test [" +  this.view.getTestCode() + "]"
+                        : "Unsuccessfully deleted test. [" +  this.view.getTestCode() + "]";
                 break;
             case 21:
                 boolean correctDeletedPerson = this.who.removePersonAndTests(this.view.getPersonID());
-                message = correctDeletedPerson ? "Successfully deleted person with all his tests." : "Unsuccessfully deleted person with his tests.";
+                message = correctDeletedPerson
+                        ? "Successfully deleted person with id [" + this.view.getPersonID() + "] with all tests."
+                        : "Unsuccessfully deleted person with id [" + this.view.getPersonID() + "] with tests.";
                 break;
             default:
-                this.view.getOutputArea().append("Something is probably wrong because there is no other button.");
+                this.view.getOutputArea().append("Something is probably wrong because there is no other button which can be clicked.");
         }
-        this.view.getOutputArea().append(message);
+        // mozno clear input fields
+        this.view.getOutputArea().setText(message);
     }
 
     private void handleGenerateButton() {
