@@ -34,6 +34,10 @@ public class PCRTest {
         this.person = person;
     }
 
+    public PCRTest(PCRTest test) {
+        //copy constructor
+    }
+
     public Person getPerson() {
         return this.person;
     }
@@ -70,6 +74,10 @@ public class PCRTest {
         return this.testValue;
     }
 
+    /**
+     * Used for output for user.
+     * @return information about test
+     */
     public String getTestInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("Test ID: ").append(this.testCode).append("\nPerson ID: ").append(this.personID);
@@ -79,6 +87,10 @@ public class PCRTest {
         return sb.toString();
     }
 
+    /**
+     * This method is used to convert data in order to save test to csv file.
+     * @return attributes divided by ;
+     */
     public String getData() {
         return String.join(";", this.timeOfTest.toString(), this.personID, String.valueOf(this.testCode),
                 String.valueOf(this.workplace), String.valueOf(this.region), String.valueOf(this.district),

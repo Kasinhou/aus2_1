@@ -1,15 +1,13 @@
 package test;
 
-import structure.AVLNode;
 import structure.AVLTree;
-import structure.BSTNode;
 import structure.BinarySearchTree;
 
 import java.util.*;
 
 /**
- * This class is testing both BST and AVL trees (functionality and performance of methods)
- * Also there are tested other structures.
+ * This class is testing both BST and AVL trees (functionality and performance of methods) using both random and in sequence operations.
+ * There are compared with other structures (TreeSet - all and HashSet - insert, delete, find).
  */
 public class Tester {
     public static void main(String[] args) {

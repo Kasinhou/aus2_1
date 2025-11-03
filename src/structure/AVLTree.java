@@ -194,7 +194,7 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
     }
 
     // TODO: trosku upratat
-    public void leftRotation(AVLNode<T> rotatedNode) {
+    private void leftRotation(AVLNode<T> rotatedNode) {
         if (rotatedNode == null || rotatedNode.getRightSon() == null) { //treba right son check???
             System.out.println("Left rotation unsuccessfull");
             return;
@@ -231,7 +231,7 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         }
     }
 
-    public void rightRotation(AVLNode<T> rotatedNode) {
+    private void rightRotation(AVLNode<T> rotatedNode) {
         if (rotatedNode == null || rotatedNode.getLeftSon() == null) {
             System.out.println("Right rotation unsuccessfull");
             return;

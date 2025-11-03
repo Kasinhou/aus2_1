@@ -23,6 +23,10 @@ public class Person implements IBSTData<Person> {
         this.testsByCode = new AVLTree<>();
     }
 
+    public Person(Person p) {
+        //copy constructor
+    }
+
     @Override
     public int compareTo(Person comparedData) {
         int result = this.personID.compareTo(comparedData.getPersonID());//TODO ignore case?
@@ -39,11 +43,6 @@ public class Person implements IBSTData<Person> {
         return this.personID;
     }
 
-    // TODO treba alebo iba insert cez getter?
-    public void addTest(TestByDate test) {
-        this.testsByDate.insert(test);
-    }
-
     //TODO mazat vsetky testy postupne alebo priradit null hodnotu
     public AVLTree<TestByDate> getTestsByDate() {
         return this.testsByDate;
@@ -53,10 +52,18 @@ public class Person implements IBSTData<Person> {
         return this.testsByCode;
     }
 
+    /**
+     * Used for output for user.
+     * @return information about person
+     */
     public String getPersonInfo() {
         return "Patient name: " + this.name + " " + this.surname + "\nDate of birth: " + this.dateOfBirth + "\nPatient ID: " + this.personID;
     }
 
+    /**
+     * This method is used to convert data in order to save person to csv file.
+     * @return attributes divided by ;
+     */
     public String getData() {
         return String.join(";", this.name, this.surname, this.dateOfBirth.toString(), this.personID);
     }

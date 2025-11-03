@@ -23,6 +23,7 @@ public class Controller {
         this.view.getSaveButton().addActionListener(e -> this.handleSaveButton());
         this.view.getLoadButton().addActionListener(e -> this.handleLoadButton());
         this.view.getClearButton().addActionListener(e -> this.handleClearButton());
+        // buttony s operaciami
         JButton[] methodButtons = view.getMethodButtons();
         for (int i = 0; i < methodButtons.length; ++i) {
             int index = i;
@@ -30,7 +31,7 @@ public class Controller {
         }
     }
 
-    private void handleMethod(int index) {//tODO upravit ak pouzivatel nezada nieco a chce to spravit
+    private void handleMethod(int index) {
         String message = "";
         switch (index) {
             case 1:
@@ -136,13 +137,14 @@ public class Controller {
             default:
                 this.view.getOutputArea().append("Something is probably wrong because there is no other button which can be clicked.");
         }
-        // mozno clear input fields
+        // moznost vycistit input fieldy ked nieco vykonam
+        //this.view.clearInputFields();
         this.view.getOutputArea().setText(message);
     }
 
     private void handleGenerateButton() {
-        this.generator.generatePeople(20);
-        this.generator.generateTests(100);
+        this.generator.generatePeople();
+        this.generator.generateTests();
     }
 
     private void handleSaveButton() {

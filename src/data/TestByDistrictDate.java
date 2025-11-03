@@ -19,14 +19,8 @@ public class TestByDistrictDate implements IBSTData<TestByDistrictDate> {
                 return -1;
             } else if (this.test.getTimeOfTest().isAfter(comparedData.getTest().getTimeOfTest())) {
                 return 1;
-            } else {//TODO hodnota epsilon? Nema to tu zmysel
-                if (Double.compare(this.test.getTestValue(), comparedData.getTest().getTestValue()) < 0) {
-                    return -1;
-                } else if (Double.compare(this.test.getTestValue(), comparedData.getTest().getTestValue()) > 0) {
-                    return 1;
-                } else {
-                    return Integer.compare(this.test.getTestCode(), comparedData.getTest().getTestCode());
-                }
+            } else {
+                return Integer.compare(this.test.getTestCode(), comparedData.getTest().getTestCode());
             }
         }
     }

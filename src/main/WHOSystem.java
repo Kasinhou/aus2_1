@@ -1,13 +1,7 @@
 package main;
 
+import data.*;
 import structure.AVLTree;
-import data.Person;
-import data.PCRTest;
-import data.TestByCode;
-import data.TestByDistrictDate;
-import data.TestByRegionDate;
-import data.TestByDate;
-import data.TestByWorkplaceDate;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -25,6 +19,9 @@ public class WHOSystem {
     private AVLTree<TestByDate> positiveTestsByDate;//8,13
     private AVLTree<TestByWorkplaceDate> testsByWorkplace;
 
+    private ArrayList<Region> regions;
+    private ArrayList<District> districts;
+    private ArrayList<Workplace> workplaces;
 
     //konstruktor (co do neho?)
     public WHOSystem() {
@@ -37,6 +34,10 @@ public class WHOSystem {
         this.testsByDate = new AVLTree<>();
         this.positiveTestsByDate = new AVLTree<>();
         this.testsByWorkplace = new AVLTree<>();
+
+        this.regions = new ArrayList<>();
+        this.districts = new ArrayList<>();
+        this.workplaces = new ArrayList<>();
     }
 
     // 1. Vloženie výsledku PCR testu do systému.
@@ -44,7 +45,6 @@ public class WHOSystem {
                                  int workplace, int region, int district,
                                  boolean testResult, double testValue, String note) {
         Person person = this.people.find(new Person("", "", null, personID));
-        //TODO pridat osobu ako atribut
         PCRTest test = new PCRTest(timeOfTest, personID, testCode, workplace, region, district, testResult, testValue, note, person);
         //TODO pridat vsade ale kde co ako, do pozitivnych len pozitivne
         boolean insertedByPCode = person.getTestsByCode().insert(new TestByCode(test));
@@ -59,16 +59,21 @@ public class WHOSystem {
             boolean insertedPosByRegionDate = this.positiveTestsByRegionDate.insert(new TestByRegionDate(test));
             boolean insertedPosByDate = this.positiveTestsByDate.insert(new TestByDate(test));
             if (!insertedPosByDistrictDate || !insertedPosByRegionDate || !insertedPosByDate) {
-                System.out.println("Niekde sa test nedokazal vlozit");
+                System.out.println("Niekde sa pozitivny test nedokazal vlozit");
+                this.removeTest(testCode);
                 return false;
             }
         }
         if (!insertedByCode || !insertedByPDate || !insertedByPCode || !insertedByDistrictDate || !insertedByRegionDate || !insertedByDate || !insertedByWorkplaceDate) {
             System.out.println("Niekde sa test nedokazal vlozit");
+            if (!insertedByCode) {
+                System.out.println("PODLA KODU - duplicitny");
+            }
+            this.removeTest(testCode);
             return false;
         }
-        System.out.println();
-        System.out.println(test.getTestInfo());
+//        System.out.println();
+//        System.out.println(test.getTestInfo());
         return true;
     }
 
@@ -85,7 +90,7 @@ public class WHOSystem {
             return "Test code was not found.";
         }
         String message = "Test result with code [" + testCode + "] for person with ID [" + personID + "]:\n\nPerson info:\n";
-        message += person.getPersonInfo() + "\nTest info:\n" + test.getTest().getTestInfo();
+        message += person.getPersonInfo() + "\n\nTest info:\n" + test.getTest().getTestInfo();
         return message;
     }
 
@@ -191,7 +196,6 @@ public class WHOSystem {
     }
 
     //10. Výpis chorých osôb v okrese (definovaný kódom okresu) k zadanému dátumu, pričom osobu považujeme za chorú X dní od pozitívneho testu (X zadá užívateľ).
-    // TODO DOROBIT OSOBU???
     public String showPositivePeopleInDistrict(int district, LocalDate date, int daysAfter) {
         PCRTest dummyTestMin = new PCRTest((date.minusDays(daysAfter)), null, Integer.MIN_VALUE, 0, 0, district, true, 0.0, null, null);
         PCRTest dummyTestMax = new PCRTest(date, null, Integer.MAX_VALUE, 0, 0, district, true, 0.0, null, null);
@@ -206,9 +210,21 @@ public class WHOSystem {
         return output.toString();
     }
 
+    //TODO chore podla hodnoty testu usporiadat
     //11. Výpis chorých osôb v okrese (definovaný kódom okresu) k zadanému dátumu, pričom osobu považujeme za chorú X dní od pozitívneho testu (X zadá užívateľ), pričom choré osoby sú usporiadané podľa hodnoty testu.
     public String showPositivePeopleInDistrictInOrder(int district, LocalDate date, int daysAfter) {
-        return this.showPositivePeopleInDistrict(district, date, daysAfter);
+        PCRTest dummyTestMin = new PCRTest((date.minusDays(daysAfter)), null, Integer.MIN_VALUE, 0, 0, district, true, 0.0, null, null);
+        PCRTest dummyTestMax = new PCRTest(date, null, Integer.MAX_VALUE, 0, 0, district, true, 0.0, null, null);
+        ArrayList<TestByDistrictDate> tests = this.positiveTestsByDistrictDate.findInterval(new TestByDistrictDate(dummyTestMin), new TestByDistrictDate(dummyTestMax));
+
+        StringBuilder output = new StringBuilder();
+        output.append("Positive people from district [").append(district).append("] to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
+        output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:");
+        for (TestByDistrictDate t : tests) {
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
+            output.append("\nTest value: ").append(t.getTest().getTestValue());
+        }
+        return output.toString();
     }
 
     //12. Výpis chorých osôb v kraji (definovaný kódom kraja) k zadanému dátumu, pričom osobu považujeme za chorú X dní od pozitívneho testu (X zadá užívateľ).
@@ -248,6 +264,8 @@ public class WHOSystem {
 
     //15. Výpis okresov usporiadaných podľa počtu chorých osôb k zadanému dátumu, pričom osobu považujeme za chorú X dní od pozitívneho testu (X zadá užívateľ).
     public String showDistrictsByPositiveCount(LocalDate date, int daysAfter) {
+        // prejst vsetky okresy a pre kazdy spravit interval find
+
         return null;
     }
 
@@ -289,7 +307,7 @@ public class WHOSystem {
             System.out.println("Person with this ID is already in the system.");
             return false;
         }
-        System.out.println(person.getPersonInfo());
+//        System.out.println(person.getPersonInfo());
         return true;
     }
 
@@ -302,7 +320,7 @@ public class WHOSystem {
             return false;
         }
         PCRTest removedTest = findTest.getTest();
-        System.out.println(removedTest.getTestInfo());
+//        System.out.println(removedTest.getTestInfo());
         boolean delFromByPCode = this.people.find(new Person("", "", null, removedTest.getPersonID())).getTestsByCode().delete(new TestByCode(removedTest));
         boolean delFromByPDate = this.people.find(new Person("", "", null, removedTest.getPersonID())).getTestsByDate().delete(new TestByDate(removedTest));
         boolean delFromCode = this.testsByCode.delete(new TestByCode(removedTest));
@@ -416,5 +434,17 @@ public class WHOSystem {
         } catch (IOException e) {
             return "Error when loading data: " + e.getMessage();
         }
+    }
+
+    public void addRegion(int code) {
+        this.regions.add(new Region(code));
+    }
+
+    public void addDistrict(int code, int region) {
+        this.districts.add(new District(code, region));
+    }
+
+    public void addWorkplace(int code, int district) {
+        this.workplaces.add(new Workplace(code, district));
     }
 }

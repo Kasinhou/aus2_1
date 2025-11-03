@@ -14,7 +14,7 @@ public class TestByDate implements IBSTData<TestByDate> {
     @Override
     public int compareTo(TestByDate comparedData) {
         LocalDate lcThis = this.test.getTimeOfTest();
-        LocalDate lcCompared = comparedData.getTest().getTimeOfTest();//TODO takto??? treba nejaku kontrolu na null
+        LocalDate lcCompared = comparedData.getTest().getTimeOfTest();//TODO takto??? treba nejaku kontrolu na null, netreba tu pridat este aj najvyssiu hodnotu testu pre 14
 //        if (lcThis == null) {
 //            return Integer.compare(this.test.getTestCode(), comparedData.getTest().getTestCode());
 //        }

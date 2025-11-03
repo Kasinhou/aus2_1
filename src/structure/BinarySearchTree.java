@@ -7,12 +7,11 @@ import java.util.LinkedList;
 public class BinarySearchTree<T extends IBSTData<T>> {
     private BSTNode<T> root;
     private int size = 0;
-//    private int level;
 
     public BinarySearchTree() {
     }
 
-    public BSTNode<T> getRoot() {
+    protected BSTNode<T> getRoot() {
         return this.root;
     }
 
@@ -23,14 +22,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
 //            System.out.println("Throw exception for incorrect setting root!");
 //        }
     }
-
-//    protected void increaseSize() {
-//        ++this.size;
-//    } mozno nebudem potrebovat ked som pouzil metody z bst v avl
-//
-//    protected void decreaseSize() {
-//        --this.size;
-//    }
 
     public int getSize() {
         return this.size;
@@ -49,7 +40,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
 //     * @param findData data which I want to find
 //     * @return node with data which was found
 //     */
-//TODO PRIVATE???
     protected BSTNode<T> findNode(T findData) {
         if (this.size == 0) {
             return null;
@@ -92,17 +82,15 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     /**
      * Insert node to BST if possible (duplicity is not available).
      * @param insertedData data which is going to be inserted
-     * @return true if insert is successfull, false if there is duplicity or insertedData is null TODO Null data??
+     * @return true if insert is successfull, false if there is duplicity or insertedData is null
      */
     public boolean insert(T insertedData) {
         if (insertedData == null) {
             return false;
         }
         BSTNode<T> insertedNode = this.newNode(insertedData);
-//        BSTNode<T> insertedNode = new BSTNode<>(insertedData);
         if (this.size == 0) {
             this.setRoot(insertedNode);
-//            System.out.println("Setting Root: " + this.root.getData());
             ++this.size;
             return true;
         }
@@ -281,7 +269,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
      * @param max to
      * @return list of all found data
      */
-    public ArrayList<T> findInterval(T min, T max) {
+    public ArrayList<T> findInterval(T min, T max) {//TODO neda sa vyuzit findnode?
         ArrayList<T> interval = new ArrayList<>();
         if (this.size == 0 || min == null || max == null) { // mozno ak je min alebo max definovane ako null tak to beriem ze od zaciatku alebo do konca
             return interval;
@@ -335,13 +323,12 @@ public class BinarySearchTree<T extends IBSTData<T>> {
      * @return list of nodes in level order
      */
     public ArrayList<T> levelOrder() {
+        ArrayList<T> levelOrderList = new ArrayList<>();
         if (this.size == 0) {
             System.out.println("Strom je prazdny.");
-            return null;
+            return levelOrderList;
         }
         BSTNode<T> startingNode = this.root;
-//        System.out.println("LEVEL ORDER");
-        ArrayList<T> levelOrderList = new ArrayList<>();
         LinkedList<BSTNode<T>> sons = new LinkedList<>();
         sons.addLast(startingNode);
         while (!sons.isEmpty()) {
@@ -360,9 +347,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
      * In order traverse of subtree starting with node given as argument
      * @return list with data in order from lowest to highest
      */
-//    TODO porozmyslat ci nie je lepsie definovet inorder pre zaciatok a koniec, ak by boli oba ako null tak z root cely strom, ak nie tak pouzit aj na vyhladanie intervalove
     public ArrayList<T> inOrder() {
-//        System.out.println("IN ORDER");
         ArrayList<T> inOrderList = new ArrayList<>();
         BSTNode<T> current = this.findNode(this.findMinimum());
         while (current != null) {
