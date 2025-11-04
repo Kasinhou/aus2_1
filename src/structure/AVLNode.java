@@ -1,12 +1,11 @@
 package structure;
 
 /**
- * AVL Node (from BST node) in AVL tree
+ * AVL Node (from BST node) in AVL tree, store balance factor
  * @param <T> type of data stored in node
  */
 public class AVLNode<T extends IBSTData<T>> extends BSTNode<T> {
     private int balanceFactor;
-//    ake vsetky atributy treba znova definovat a ktore pouzit z BST, tak isto metody
 
     public AVLNode(T data) {
         super(data);
@@ -27,7 +26,7 @@ public class AVLNode<T extends IBSTData<T>> extends BSTNode<T> {
     public void setBalanceFactor(int balanceFactor) {
         this.balanceFactor = balanceFactor;
     }
-    // TODO: porozmyslat ci takto je to najlepsie alebo ci neskusit inak
+
     public AVLNode<T> getLeftSon() {
         return (AVLNode<T>) super.getLeftSon();
     }

@@ -32,6 +32,9 @@ public class Generator {
         this.testCodes = new HashSet<>();
     }
 
+    /**
+     * Generate people and adding them to the system.
+     */
     public void generatePeople() {
         int i = 0;
         String name, surname, personID;
@@ -49,6 +52,9 @@ public class Generator {
         System.out.println("People generated.");
     }
 
+    /**
+     * Generate tests and adding them to the system.
+     */
     public void generateTests() {
         LocalDate timeOfTest;
         String personID, note;
@@ -77,6 +83,9 @@ public class Generator {
         System.out.println("Tests generated.");
     }
 
+    /**
+     * Random connections to region-district-workplace
+     */
     public void connectRegionDistrictWorkplace() {
         this.districtsRegion = new int[DISTRICT_COUNT + 1];
         this.workplacesDistrict = new int[WORKPLACE_COUNT + 1];

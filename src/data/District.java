@@ -1,6 +1,5 @@
 package data;
 
-import structure.AVLTree;
 import structure.IBSTData;
 
 public class District implements IBSTData<District> {

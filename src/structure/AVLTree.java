@@ -1,17 +1,23 @@
 package structure;
 
+/**
+ * Class for structure AVL Tree with operations for using it.
+ * @param <T> data stored in tree
+ */
 public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
 
-    public AVLTree() {
-//        super();
-    }
-//    kolko metod a atributov je lepsie overridnut a kolko nechat z bst???
+    public AVLTree() {}
 
     @Override
     protected BSTNode<T> newNode(T data) {
         return new AVLNode<>(data);
     }
 
+    /**
+     * Insertion of node which contains data passed as argument
+     * Rebalancing tree after insert with rules for AVL insert
+     * @return if insertion was successfully
+     */
     @Override
     public boolean insert(T insertedData) {
         boolean isInserted = super.insert(insertedData);
@@ -19,7 +25,7 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
             return false;
         }
         AVLNode<T> insertedNode = (AVLNode<T>) this.findNode(insertedData);
-        // zmena balance faktorov
+        // changing BF after insert
         AVLNode<T> currentNode = insertedNode.getParent();
         AVLNode<T> previousNode = insertedNode;
         while (currentNode != null) {
@@ -42,20 +48,19 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
                     int previousRightSonBF = previousRightSon.getBalanceFactor();
                     this.leftRotation(previousNode);
                     this.rightRotation(currentNode);
-                    if (previousRightSonBF == 0) { // R=0,S=0,Sr=0
+                    if (previousRightSonBF == 0) {
                         currentNode.setBalanceFactor(0);
                         previousNode.setBalanceFactor(0);
-                    } else if (previousRightSonBF == 1) { // R=0,S=-1,Sr=0
+                    } else if (previousRightSonBF == 1) {
                         currentNode.setBalanceFactor(0);
                         previousNode.setBalanceFactor(-1);
                         previousRightSon.setBalanceFactor(0);
-                    } else { // R=1,S=0,Sr=0
+                    } else {
                         currentNode.setBalanceFactor(1);
                         previousNode.setBalanceFactor(0);
                         previousRightSon.setBalanceFactor(0);
                     }
                 }
-//                System.out.println("BF: CURRENT, PREVIOUS " + currentNode.getBalanceFactor() + previousNode.getBalanceFactor());
                 return true;
             } else if (currentNode.getBalanceFactor() == 2) {
                 if (previousNode.getBalanceFactor() == 1) { // L rotation - L(current)
@@ -67,20 +72,19 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
                     int previousLeftSonBF = previousLeftSon.getBalanceFactor();
                     this.rightRotation(previousNode);
                     this.leftRotation(currentNode);
-                    if (previousLeftSonBF == 0) { // R=0,S=0,Sl=0
+                    if (previousLeftSonBF == 0) {
                         currentNode.setBalanceFactor(0);
                         previousNode.setBalanceFactor(0);
-                    } else if (previousLeftSonBF == 1) { // R=-1,S=0,Sl=0
+                    } else if (previousLeftSonBF == 1) {
                         currentNode.setBalanceFactor(-1);
                         previousNode.setBalanceFactor(0);
                         previousLeftSon.setBalanceFactor(0);
-                    } else { // R=0,S=1,Sl=0
+                    } else {
                         currentNode.setBalanceFactor(0);
                         previousNode.setBalanceFactor(1);
                         previousLeftSon.setBalanceFactor(0);
                     }
                 }
-//                System.out.println("BF: CURRENT, PREVIOUS " + currentNode.getBalanceFactor() + previousNode.getBalanceFactor());
                 return true;
             }
             previousNode = currentNode;
@@ -89,6 +93,11 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         return true;
     }
 
+    /**
+     * Deletion of node which contains data passed as argument
+     * Rebalancing tree after deletion with rules for AVL delete
+     * @return if deletion was successfully
+     */
     @Override
     public boolean delete(T deletedData) {
         AVLNode<T> deletedNode = (AVLNode<T>) this.findNode(deletedData);
@@ -96,40 +105,39 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
             return false;
         }
         int deletedNodeBF = deletedNode.getBalanceFactor();
-        // odkial zacnem cestu k vrcholu na vyvazovanie a zmenu bf
-        AVLNode<T> startingNodeToBalance = deletedNode.getParent();//TODO ROOT ci to nie je
+        // starting node to rebalancing after delete
+        AVLNode<T> startingNodeToBalance = deletedNode.getParent();
         boolean startingToBalanceFromLeft = deletedNode.isLeftSon();
         if (deletedNode.getLeftSon() != null && deletedNode.getRightSon() != null) {
             AVLNode<T> nextInOrder = (AVLNode<T>) super.nextInOrder(deletedNode);
             if (nextInOrder.getParent() != deletedNode) {
                 startingNodeToBalance = nextInOrder.getParent();
-                startingToBalanceFromLeft = true;//najlavejsi
-            } else {//ak je nasledovnik syn mazaneho
+                startingToBalanceFromLeft = true;
+            } else {
                 startingNodeToBalance = nextInOrder;
-                startingToBalanceFromLeft = false;//prvy pravy syn
+                startingToBalanceFromLeft = false;
             }
             nextInOrder.setBalanceFactor(deletedNodeBF);
-
         }
         boolean isDeleted = super.delete(deletedData);
         if (!isDeleted) {
             return false;
         }
 
-        // kontrola BF a potrebne vyvazovanie
-        AVLNode<T> currentNode = startingNodeToBalance;//pri liste a jednom synovi je to parent mazaneho
+        // BF check and rebalancing
+        AVLNode<T> currentNode = startingNodeToBalance;
         boolean currentFromLeft = startingToBalanceFromLeft;
         while (currentNode != null) {
             int currentBF = currentNode.getBalanceFactor();
-            if (currentFromLeft) {// ak je lavy syn
+            if (currentFromLeft) {
                 currentNode.increaseBalanceFactor();
-            } else {// ak je pravy
+            } else {
                 currentNode.decreaseBalanceFactor();
             }
             if (currentBF == 0) {
-                return true; //ak bola 0 pred zmenou tak koncim
+                return true;
             }
-            // definovat premenne kvoli zmene bf po rotacii a pamataniu si cesty hore
+            // define variables to change bf after rotations and to go up after
             AVLNode<T> rotated = currentNode;
             int rotatedBF = rotated.getBalanceFactor();
             currentFromLeft = currentNode.isLeftSon();
@@ -139,10 +147,10 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
                 int rotatedLeftSonBF = rotatedLeftSon.getBalanceFactor();
                 if (rotatedLeftSonBF <= 0) {// R(rotated)
                     this.rightRotation(rotated);
-                    if (rotatedLeftSonBF == -1) {//R(0);Rl(0)
+                    if (rotatedLeftSonBF == -1) {
                         rotated.setBalanceFactor(0);
                         rotatedLeftSon.setBalanceFactor(0);
-                    } else {//R(-1);Rl(1)
+                    } else {
                         rotated.setBalanceFactor(-1);
                         rotatedLeftSon.setBalanceFactor(1);
                         return true;
@@ -155,9 +163,9 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
                     rotated.setBalanceFactor(0);
                     rotatedLeftSon.setBalanceFactor(0);
                     rotatedLeftSonRightSon.setBalanceFactor(0);
-                    if (rotatedLeftSonRightSonBF == -1) {//R(1) inak vsetko na 0
+                    if (rotatedLeftSonRightSonBF == -1) {
                         rotated.setBalanceFactor(1);
-                    } else if (rotatedLeftSonRightSonBF == 1) {//Rl(-1) inak vsetko na 0
+                    } else if (rotatedLeftSonRightSonBF == 1) {
                         rotatedLeftSon.setBalanceFactor(-1);
                     }
                 }
@@ -166,10 +174,10 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
                 int rotatedRightSonBF = rotatedRightSon.getBalanceFactor();
                 if (rotatedRightSonBF >= 0) {// L(rotated)
                     this.leftRotation(rotated);
-                    if (rotatedRightSonBF == 1) {//R(0);Rr(0)
+                    if (rotatedRightSonBF == 1) {
                         rotated.setBalanceFactor(0);
                         rotatedRightSon.setBalanceFactor(0);
-                    } else {//R(1);Rr(-1)
+                    } else {
                         rotated.setBalanceFactor(1);
                         rotatedRightSon.setBalanceFactor(-1);
                         return true;
@@ -182,9 +190,9 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
                     rotated.setBalanceFactor(0);
                     rotatedRightSon.setBalanceFactor(0);
                     rotatedRightSonLeftSon.setBalanceFactor(0);
-                    if (rotatedRightSonLeftSonBF == 1) {//R(-1) inak vsetko na 0
+                    if (rotatedRightSonLeftSonBF == 1) {
                         rotated.setBalanceFactor(-1);
-                    } else if (rotatedRightSonLeftSonBF == -1) {//Rr(1) inak vsetko na 0
+                    } else if (rotatedRightSonLeftSonBF == -1) {
                         rotatedRightSon.setBalanceFactor(1);
                     }
                 }
@@ -193,14 +201,15 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         return true;
     }
 
-    // TODO: trosku upratat
+    /**
+     * Left rotation around node passed as argument
+     */
     private void leftRotation(AVLNode<T> rotatedNode) {
-        if (rotatedNode == null || rotatedNode.getRightSon() == null) { //treba right son check???
-            System.out.println("Left rotation unsuccessfull");
+        if (rotatedNode == null || rotatedNode.getRightSon() == null) {
+            System.out.println("Left rotation unsuccessfully");
             return;
         }
-//        System.out.println("LEFT ROTATION");
-        AVLNode<T> rotatedNodeRightSon = rotatedNode.getRightSon(); // musim mat praveho syna ak idem rotovat
+        AVLNode<T> rotatedNodeRightSon = rotatedNode.getRightSon();
         AVLNode<T> rotatedNodeParent = rotatedNode.getParent();
         boolean isRotatedLeftSon = rotatedNode.isLeftSon();
         if (rotatedNodeRightSon.getLeftSon() != null) {
@@ -211,7 +220,7 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         } else {
             rotatedNode.setRightSon(null);
         }
-        if (rotatedNodeParent != null) { // pripad ze je koren
+        if (rotatedNodeParent != null) {
             if (isRotatedLeftSon) {
                 rotatedNodeParent.setLeftSon(rotatedNodeRightSon);
             } else {
@@ -223,21 +232,23 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         rotatedNodeRightSon.setParent(rotatedNodeParent);
         rotatedNode.setParent(rotatedNodeRightSon);
         rotatedNodeRightSon.setLeftSon(rotatedNode);
-        rotatedNode.setIsLeftSon(true); // nastavenie ci je lavy syn, zmena pri rotacii
+        rotatedNode.setIsLeftSon(true);
         if (rotatedNodeParent != null) {
             rotatedNodeRightSon.setIsLeftSon(isRotatedLeftSon);
         } else {
-            rotatedNodeRightSon.setIsLeftSon(false); //osetrene inde
+            rotatedNodeRightSon.setIsLeftSon(false);
         }
     }
 
+    /**
+     * Right rotation around node passed as argument
+     */
     private void rightRotation(AVLNode<T> rotatedNode) {
         if (rotatedNode == null || rotatedNode.getLeftSon() == null) {
-            System.out.println("Right rotation unsuccessfull");
+            System.out.println("Right rotation unsuccessfully");
             return;
         }
-//        System.out.println("RIGHT ROTATION");
-        AVLNode<T> rotatedNodeLeftSon = rotatedNode.getLeftSon(); // musim mat laveho syna ak idem rotovat
+        AVLNode<T> rotatedNodeLeftSon = rotatedNode.getLeftSon();
         AVLNode<T> rotatedNodeParent = rotatedNode.getParent();
         boolean isRotatedLeftSon = rotatedNode.isLeftSon();
         if (rotatedNodeLeftSon.getRightSon() != null) {
@@ -248,7 +259,7 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         } else {
             rotatedNode.setLeftSon(null);
         }
-        if (rotatedNodeParent != null) { // koren
+        if (rotatedNodeParent != null) {
             if (isRotatedLeftSon) {
                 rotatedNodeParent.setLeftSon(rotatedNodeLeftSon);
             } else {
@@ -264,7 +275,7 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         if (rotatedNodeParent != null) {
             rotatedNodeLeftSon.setIsLeftSon(isRotatedLeftSon);
         } else {
-            rotatedNodeLeftSon.setIsLeftSon(false);// zas koren, vyriesene na inych urovnach
+            rotatedNodeLeftSon.setIsLeftSon(false);
         }
     }
 
@@ -276,21 +287,22 @@ public class AVLTree<T extends IBSTData<T>> extends BinarySearchTree<T> {
         return this.getHeightOfNode((AVLNode<T>) super.getRoot()) == -1;
     }
 
-    // vrati vysku od vrchola poslaneho parametrom ku najspodnejsiemu listu, ak nie je |BF| <= 1 vrati -1
+    // returns either diff of heights of right and left subtree or -1 if unbalanced
     private int getHeightOfNode(AVLNode<T> currentNode) {
-        if (currentNode == null) { // list nema synov, vrati 0
+        if (currentNode == null) {
             return 0;
         }
         int leftSonHeight = this.getHeightOfNode(currentNode.getLeftSon());
-        if (leftSonHeight == -1) {// uz nebude AVL
+        if (leftSonHeight == -1) {// not AVL
             return -1;
         }
         int rightSonHeight = this.getHeightOfNode(currentNode.getRightSon());
-        if (rightSonHeight == -1) {
+        if (rightSonHeight == -1) {// not AVL
             return -1;
         }
 
-        if (Math.abs(leftSonHeight - rightSonHeight) >= 2) {// |BF| >= 2
+        // |BF| >= 2
+        if (Math.abs(leftSonHeight - rightSonHeight) >= 2) {
             return -1;
         } else {
             return Math.max(leftSonHeight, rightSonHeight);

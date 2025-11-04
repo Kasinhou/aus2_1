@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller which actions from user.
+ * Call methods from Model (WHOSystem) and get component from view to give results to user.
+ */
 public class Controller {
     private WHOSystem who;
     private View view;

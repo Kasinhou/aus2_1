@@ -5,6 +5,9 @@ import structure.IBSTData;
 
 import java.time.LocalDate;
 
+/**
+ * Class which represents data Person with its attributes and compare method to use in structures.
+ */
 public class Person implements IBSTData<Person> {
     private AVLTree<TestByCode> testsByCode;//1,2
     private AVLTree<TestByDate> testsByDate;//3,
@@ -23,13 +26,9 @@ public class Person implements IBSTData<Person> {
         this.testsByCode = new AVLTree<>();
     }
 
-    public Person(Person p) {
-        //copy constructor
-    }
-
     @Override
     public int compareTo(Person comparedData) {
-        int result = this.personID.compareTo(comparedData.getPersonID());//TODO ignore case?
+        int result = this.personID.compareTo(comparedData.getPersonID());
         if (result < 0) {
             return -1;
         } else if (result > 0) {
@@ -43,7 +42,6 @@ public class Person implements IBSTData<Person> {
         return this.personID;
     }
 
-    //TODO mazat vsetky testy postupne alebo priradit null hodnotu
     public AVLTree<TestByDate> getTestsByDate() {
         return this.testsByDate;
     }

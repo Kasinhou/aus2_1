@@ -3,6 +3,9 @@ package gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Defines the structure of GUI and includes methods, getters for Controller.
+ */
 public class View extends JFrame {
     private JTextField personName;
     private JTextField personSurname;

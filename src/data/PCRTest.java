@@ -2,11 +2,10 @@ package data;
 
 import java.time.LocalDate;
 
+/**
+ * Class which represents data PCR test with its attributes.
+ */
 public class PCRTest {
-    // dátum a čas testu
-    // unikátne číslo pacienta – reťazec
-    // unikátny náhodný kód PCR testu - celé číslo
-    // unikátny kód pracoviska, ktoré PCR test vykonalo – celé číslo
     private LocalDate timeOfTest;
     private String personID;
     private int testCode;
@@ -32,10 +31,6 @@ public class PCRTest {
         this.testValue = testValue;
         this.note = note;
         this.person = person;
-    }
-
-    public PCRTest(PCRTest test) {
-        //copy constructor
     }
 
     public Person getPerson() {

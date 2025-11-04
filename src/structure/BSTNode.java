@@ -31,7 +31,6 @@ public class BSTNode<T extends IBSTData<T>> {
         return this.parent;
     }
 
-    // ak by som rovno tu skontroloval ci je parent null, ak nie tak priradit a zrusila by sa duplicita?
     protected void setLeftSon(BSTNode<T> leftSon) {
         this.leftSon = leftSon;
     }
@@ -47,8 +46,6 @@ public class BSTNode<T extends IBSTData<T>> {
     public boolean isLeftSon() {
         return this.isLeftSon;
     }
-    // mozno namiesto atributu iba zistit ci je lavy
-    //    public boolean isLeftSon() { return getParent() != null && getParent().getLeftSon() == this; }
 
     protected void setIsLeftSon(boolean isLeftSon) {
         this.isLeftSon = isLeftSon;

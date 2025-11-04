@@ -3,7 +3,10 @@ package structure;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-// uvedomit si ktore metody/atributy su public/private (niektore som zatial pouzival na testovanie) TODO: upravit
+/**
+ * Class for structure BST with operations for using this structure.
+ * @param <T> data
+ */
 public class BinarySearchTree<T extends IBSTData<T>> {
     private BSTNode<T> root;
     private int size = 0;
@@ -16,17 +19,13 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     }
 
     protected void setRoot(BSTNode<T> newRoot) {
-//        if (this.size == 0) {
         this.root = newRoot;
-//        } else {
-//            System.out.println("Throw exception for incorrect setting root!");
-//        }
     }
 
-    public int getSize() {
-        return this.size;
-    }
-
+    /**
+     * Find data in tree.
+     * @return data if exists, else null
+     */
     public T find(T findData) {
         BSTNode<T> findNode = this.findNode(findData);
         if (findNode == null) {
@@ -35,46 +34,40 @@ public class BinarySearchTree<T extends IBSTData<T>> {
         return findNode.getData();
     }
 
-//    /**
-//     * Find node in BST (and AVL) by data given as argument.
-//     * @param findData data which I want to find
-//     * @return node with data which was found
-//     */
+    /**
+     * Help method to find node not data.
+     * @return node with found data
+     */
     protected BSTNode<T> findNode(T findData) {
         if (this.size == 0) {
             return null;
         }
         BSTNode<T> currentNode = root;
         boolean isNotFound = true;
-//        System.out.print("Hladany vrchol: " + findData);
 
         while (isNotFound) {
             int result = findData.compareTo(currentNode.getData());
-//            System.out.println(" -> " + result);
 
             if (result < 0) {
-//                System.out.println("hladany je mensi ako aktualny = idem dolava");
                 if (currentNode.getLeftSon() != null) {
                     currentNode = currentNode.getLeftSon();
                 } else {
                     isNotFound = false;
                 }
             } else if (result > 0) {
-//                System.out.println("hladany je vacsi ako aktualny = idem doprava");
                 if (currentNode.getRightSon() != null) {
                     currentNode = currentNode.getRightSon();
                 } else {
                     isNotFound = false;
                 }
             } else {
-                return currentNode;//.getData();
+                return currentNode;
             }
         }
-//        System.out.println("NENAJDENY");
         return null;
     }
 
-    // vytvorenie node kvoli problemu s castovanim v insert avl
+    // creating new node
     protected BSTNode<T> newNode(T newData) {
         return new BSTNode<>(newData);
     }
@@ -82,7 +75,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     /**
      * Insert node to BST if possible (duplicity is not available).
      * @param insertedData data which is going to be inserted
-     * @return true if insert is successfull, false if there is duplicity or insertedData is null
+     * @return true if insert is successfully, false if there is duplicity or insertedData is null
      */
     public boolean insert(T insertedData) {
         if (insertedData == null) {
@@ -96,15 +89,11 @@ public class BinarySearchTree<T extends IBSTData<T>> {
         }
         BSTNode<T> currentNode = root;
         boolean isNotInserted = true;
-//        System.out.print("Vkladany vrchol: " + insertedNode.getData());
 
         while (isNotInserted) {
-//            System.out.println("; Porovnavany aktualny vrchol: " + currentNode.getData());
             int result = insertedNode.getData().compareTo(currentNode.getData());
-//            System.out.println(" -> " + result);
 
             if (result < 0) {
-//                System.out.println("vkladany je mensi ako aktualny = idem dolava");
                 if (currentNode.getLeftSon() != null) {
                     currentNode = currentNode.getLeftSon();
                 } else {
@@ -112,11 +101,9 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     insertedNode.setParent(currentNode);
                     insertedNode.setIsLeftSon(true);
                     ++this.size;
-//                    System.out.println("vlozeny vrchol " + hlpNode.getData() + " je lavy syn " + currentNode.getData());
                     return true;
                 }
             } else if (result > 0) {
-//                System.out.println("vkladany je vacsi ako aktualny = idem doprava");
                 if (currentNode.getRightSon() != null) {
                     currentNode = currentNode.getRightSon();
                 } else {
@@ -124,13 +111,10 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     insertedNode.setParent(currentNode);
                     insertedNode.setIsLeftSon(false);
                     ++this.size;
-//                    System.out.println("vlozeny vrchol " + hlpNode.getData() + " je pravy syn " + currentNode.getData());
                     return true;
                 }
             } else {
-//                System.out.println("Vkladane data su uz v strome: DUPLICITA");
                 isNotInserted = false;
-//                return false;
             }
         }
         return false;
@@ -144,11 +128,9 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     public boolean delete(T deletedData) {
         BSTNode<T> deletedNode = this.findNode(deletedData);
         if (deletedNode == null) {
-//            System.out.println("Nemozno zmazat vrchol kedze nie je v strome!");
             return false;
         }
-        if (this.size == 1) { // alebo iba size == 1, + radsej getroot ako this root?
-//            System.out.println("Mazem koren, a jediny vrchol");
+        if (this.size == 1) {
             this.root = null;
             --this.size;
             return true;
@@ -163,15 +145,16 @@ public class BinarySearchTree<T extends IBSTData<T>> {
             deletedIsLeftSon = deletedNodeParent.getLeftSon() == deletedNode;//root
         }
 
+        // node is leaf, has no sons
         if (!hasLeft && !hasRight) {
             if (deletedIsLeftSon) {
                 deletedNodeParent.setLeftSon(null);
             } else {
                 deletedNodeParent.setRightSon(null);
             }
-        } else if (hasLeft && !hasRight) { // iba lavy syn
-            // nastavit parentovi noveho syna (laveho syna mazaneho), lavemu synovi noveho parenta (mazaneho) + zmazat mazanemu atributy
-            if (this.root == deletedNode) { // alebo deletedNodeParent == null)
+        // node has only left son
+        } else if (hasLeft && !hasRight) {
+            if (this.root == deletedNode) {
                 this.root = deletedNodeLeftSon;
             } else {
                 if (deletedIsLeftSon) {
@@ -182,7 +165,8 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     deletedNodeLeftSon.setIsLeftSon(false);
                 }
             }
-            deletedNodeLeftSon.setParent(deletedNodeParent); // v pripade root je to null
+            deletedNodeLeftSon.setParent(deletedNodeParent);
+        // node has only right son
         } else if (!hasLeft && hasRight) {
             if (this.root == deletedNode) {
                 this.root = deletedNodeRightSon;
@@ -196,13 +180,14 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 }
             }
             deletedNodeRightSon.setParent(deletedNodeParent);
+        // node has both left and right sons
         } else {
-            // z P podstromu najlavejsi (idem napravo a potom stale nalavo az kym nemam laveho)
+            // the most left son from right subtree
             BSTNode<T> nextInOrder = this.nextInOrder(deletedNode);
             BSTNode<T> nextInOrderRightSon = nextInOrder.getRightSon();
             BSTNode<T> nextInOrderParent = nextInOrder.getParent();
 
-            // ak nie je nasledovnik priamy pravy syn
+            // if successor is not right son
             if (nextInOrderParent != deletedNode) {
                 nextInOrderParent.setLeftSon(nextInOrderRightSon);
                 nextInOrder.setRightSon(deletedNodeRightSon);
@@ -212,7 +197,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     nextInOrderRightSon.setIsLeftSon(true);
                 }
             }
-            // ak je nasledovnik jeho syn a nema dalsich lavych tak iba posunut...
+            // if successor is right son, just move
             nextInOrder.setParent(deletedNodeParent);
             nextInOrder.setLeftSon(deletedNodeLeftSon);
             nextInOrder.setIsLeftSon(deletedIsLeftSon);
@@ -227,6 +212,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 }
             }
         }
+        // removing references to deleted node
         deletedNode.setLeftSon(null);
         deletedNode.setRightSon(null);
         deletedNode.setParent(null);
@@ -236,17 +222,14 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     }
 
     /**
-     * Find succesor? to node given as argument
-     * @param currentNode finding successor
+     * Find successor in tree to node given as argument
      * @return successor
      */
-    // ak nema synov tak idem hore az kym nenarazim na prveho predka ktory siel dolava (jeho syn z ktoreho idem je pravy syn)
     protected BSTNode<T> nextInOrder(BSTNode<T> currentNode) {
         if (currentNode == null) {
             return null;
         }
         BSTNode<T> next;
-        // UNIVERZALNE PRE AKEHOKOLVEK, pozor na konecny prvok, ten vrati null // TODO
         if (currentNode.getRightSon() != null) {
             next = currentNode.getRightSon();
             while (next.getLeftSon() != null) {
@@ -254,7 +237,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
             }
         } else {
             next = currentNode;
-            while (!next.isLeftSon() && next != this.root) { //ak sa rovna next korenu tak vrati next.getParent co je null
+            while (!next.isLeftSon() && next != this.root) {
                 next = next.getParent();
             }
             next = next.getParent();
@@ -307,9 +290,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
         BSTNode<T> next = this.nextInOrder(currentNode);
         // pridavanie az do maxima
         while (next != null && max.compareTo(next.getData()) >= 0) {
-//            if (max.compareTo(next.getData()) < 0) {
-//                break;
-//            }
             interval.add(next.getData());
             next = this.nextInOrder(next);
         }
@@ -317,8 +297,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     }
 
     /**
-     * Level order of Tree
-//     * @param startingNode node from where I want to run level order, root of subtree
+     * Level order of tree
      * @return list of nodes in level order
      */
     public ArrayList<T> levelOrder() {
@@ -343,8 +322,8 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     }
 
     /**
-     * In order traverse of subtree starting with node given as argument
-     * @return list with data in order from lowest to highest
+     * In order traverse of tree
+     * @return list with data in order from minimum to maximum
      */
     public ArrayList<T> inOrder() {
         ArrayList<T> inOrderList = new ArrayList<>();
