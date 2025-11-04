@@ -7,6 +7,9 @@ import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * Model, actual logic behind what are operations doing.
+ */
 public class WHOSystem {
     private AVLTree<Person> people;//2,3,19,21,10-14
     private AVLTree<TestByCode> testsByCode;//18,20
@@ -59,15 +62,12 @@ public class WHOSystem {
             boolean insertedPosByRegionDate = this.positiveTestsByRegionDate.insert(new TestByRegionDate(test));
             boolean insertedPosByDate = this.positiveTestsByDate.insert(new TestByDate(test));
             if (!insertedPosByDistrictDate || !insertedPosByRegionDate || !insertedPosByDate) {
-                System.out.println("Niekde sa pozitivny test nedokazal vlozit");
+                System.out.println("Positive test was not inserted somewhere.");
                 return false;
             }
         }
         if (!insertedByCode || !insertedByPDate || !insertedByPCode || !insertedByDistrictDate || !insertedByRegionDate || !insertedByDate || !insertedByWorkplaceDate) {
-            System.out.println("Niekde sa test nedokazal vlozit");
-            if (!insertedByCode) {
-                System.out.println("PODLA KODU - duplicitny");
-            }
+            System.out.println("Test was not inserted somewhere.");
             return false;
         }
         return true;
@@ -116,7 +116,8 @@ public class WHOSystem {
         output.append("All positive tests in district [").append(district).append("] from ").append(from).append(" to ").append(to);
         output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDistrictDate t : tests) {
-            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
+            output.append("\nTest\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
@@ -130,7 +131,8 @@ public class WHOSystem {
         output.append("All tests in district [").append(district).append("] from ").append(from).append(" to ").append(to);
         output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDistrictDate t : tests) {
-            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
+            output.append("\nTest\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
@@ -144,7 +146,8 @@ public class WHOSystem {
         output.append("All positive tests in region [").append(region).append("] from ").append(from).append(" to ").append(to);
         output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByRegionDate t : tests) {
-            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
+            output.append("\nTest\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
@@ -158,7 +161,8 @@ public class WHOSystem {
         output.append("All tests in region [").append(region).append("] from ").append(from).append(" to ").append(to);
         output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByRegionDate t : tests) {
-            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
+            output.append("\nTest\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
@@ -172,7 +176,8 @@ public class WHOSystem {
         output.append("All positive tests from ").append(from).append(" to ").append(to);
         output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDate t : tests) {
-            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
+            output.append("\nTest\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
@@ -186,7 +191,8 @@ public class WHOSystem {
         output.append("All tests from ").append(from).append(" to ").append(to);
         output.append("\n\nNumber of tests: ").append(tests.size()).append("\n\nTests:");
         for (TestByDate t : tests) {
-            output.append("\n--------------------\n").append(t.getTest().getTestInfo());
+            output.append("\n--------------------\n").append(t.getTest().getPerson().getPersonInfo());
+            output.append("\nTest\n").append(t.getTest().getTestInfo());
         }
         return output.toString();
     }
@@ -223,7 +229,7 @@ public class WHOSystem {
         }
 
         StringBuilder output = new StringBuilder();
-        output.append("Positive people from district [").append(district).append("] to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
+        output.append("Positive people from district [").append(district).append("] to date ").append(date).append(" ordered by test value.\n(person is positive ").append(daysAfter).append(" days after positive test).");
         output.append("\n\nNumber of people: ").append(tests.size()).append("\n\nPeople:");
         for (District d : orderedDistrictsByValue.inOrder()) {
             output.append("\n--------------------\n").append(d.getTest().getPerson().getPersonInfo());
@@ -366,9 +372,9 @@ public class WHOSystem {
         PCRTest dummyTest = new PCRTest(null, null, testCode, 0, 0, 0, false, 0.0, null, null);
         TestByCode test = this.testsByCode.find(new TestByCode(dummyTest));
         if (test == null) {
-            return "Test code was not found.";
+            return "Test code " + testCode + "was not found.";
         }
-        return "Person\n" + test.getTest().getPerson().getPersonInfo() + "\nTest info for test with code [" + testCode + "]:\n" + test.getTest().getTestInfo();
+        return "Test info for test with code [" + testCode + "]:\nPerson\n" + test.getTest().getPerson().getPersonInfo() + "\nTest\n" + test.getTest().getTestInfo();
     }
 
     //19. Vloženie osoby do systému.
@@ -386,7 +392,7 @@ public class WHOSystem {
     public boolean removeTest(int testCode) {
         TestByCode findTest = this.testsByCode.find(new TestByCode(new PCRTest(null, null, testCode, 0, 0, 0, false, 0.0, null, null)));
         if (findTest == null) {
-            System.out.println("Test s takymto kodom sa nenasiel");
+            System.out.println("Test with this test code was not found.");
             return false;
         }
         PCRTest removedTest = findTest.getTest();
@@ -419,13 +425,16 @@ public class WHOSystem {
         ArrayList<TestByCode> personsTest = person.getTestsByCode().levelOrder();
         for (int i = personsTest.size() - 1; i >= 0; --i) {
             if (!this.removeTest(personsTest.get(i).getTest().getTestCode())) {
-                System.out.println("Mazanie nejakeho testu neprebehlo uspesne " + i);
+                System.out.println("Deletion of some test was not successfull " + i);
                 return false;
             }
         }
         return this.people.delete(person);
     }
 
+    /**
+     * Saves data (3 files) from system to csv.
+     */
     public String saveDataToCSV() {
         ArrayList<Person> peopleToSave = this.people.levelOrder();
         ArrayList<TestByCode> testsToSave = this.testsByCode.levelOrder();
@@ -486,6 +495,9 @@ public class WHOSystem {
         }
     }
 
+    /**
+     * Load data (from 3 files) into the system and structures.
+     */
     public String loadDataFromCSV() {
         String peopleFileName = "people.csv";
         String testsFileName = "tests.csv";
@@ -502,7 +514,6 @@ public class WHOSystem {
             while ((rowPerson = peopleReader.readLine()) != null) {
                 String[] data = rowPerson.split(";");
                 if (data.length == 4) {
-//                    peopleToLoad.add(new Person(data[0], data[1], LocalDate.parse(data[2]), data[3]));
                     this.addPerson(data[0], data[1], LocalDate.parse(data[2]), data[3]);
                 } else {
                     System.out.println("Tento riadok osoby je nespravny: " + rowPerson);
