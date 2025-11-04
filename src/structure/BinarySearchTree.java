@@ -246,14 +246,12 @@ public class BinarySearchTree<T extends IBSTData<T>> {
     }
 
     /**
-     * Finding all data withing some interval
-     * @param min from
-     * @param max to
+     * Finding all data withing interval from min to max
      * @return list of all found data
      */
-    public ArrayList<T> findInterval(T min, T max) {//TODO neda sa vyuzit findnode?
+    public ArrayList<T> findInterval(T min, T max) {
         ArrayList<T> interval = new ArrayList<>();
-        if (this.size == 0 || min == null || max == null) { // mozno ak je min alebo max definovane ako null tak to beriem ze od zaciatku alebo do konca
+        if (this.size == 0 || min == null || max == null) {
             return interval;
         }
         BSTNode<T> currentNode = root;
@@ -266,16 +264,14 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 if (currentNode.getLeftSon() != null) {
                     currentNode = currentNode.getLeftSon();
                 } else {
-                    // ukoncene hladanie, ak je vysledok mensi tak current je tiez mensi a odtialto idem vzostupne
                     isNotFound = false;
                 }
             } else if (result > 0) {
                 if (currentNode.getRightSon() != null) {
                     currentNode = currentNode.getRightSon();
                 } else {
-                    // RAZ ZAVOLAT NASLEDOVNIKA a ukoncit cyklus
+                    // need to find successor
                     currentNode = this.nextInOrder(currentNode);
-                    // lenze pozor na to ze treba aj nasledovnika porovnat s minimom aby som naozaj zacal od neho, TAK mozno ani nie kedze nasledonik by fakt mal byt prvy predok ktory ide dolava
                     isNotFound = false;
                 }
             } else {
@@ -288,7 +284,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
         }
         interval.add(currentNode.getData());
         BSTNode<T> next = this.nextInOrder(currentNode);
-        // pridavanie az do maxima
+        // adding to list till maximum
         while (next != null && max.compareTo(next.getData()) >= 0) {
             interval.add(next.getData());
             next = this.nextInOrder(next);
