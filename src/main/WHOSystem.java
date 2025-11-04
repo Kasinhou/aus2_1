@@ -11,14 +11,14 @@ import java.util.ArrayList;
  * Model, actual logic behind what are operations doing.
  */
 public class WHOSystem {
-    private AVLTree<Person> people;//2,3,19,21,10-14
-    private AVLTree<TestByCode> testsByCode;//18,20
-    private AVLTree<TestByDistrictDate> testsByDistrictDate;//5
-    private AVLTree<TestByDistrictDate> positiveTestsByDistrictDate;//4,10,11(nova?)
-    private AVLTree<TestByRegionDate> testsByRegionDate;//7
-    private AVLTree<TestByRegionDate> positiveTestsByRegionDate;//6,12
-    private AVLTree<TestByDate> testsByDate;//9
-    private AVLTree<TestByDate> positiveTestsByDate;//8,13
+    private AVLTree<Person> people;
+    private AVLTree<TestByCode> testsByCode;
+    private AVLTree<TestByDistrictDate> testsByDistrictDate;
+    private AVLTree<TestByDistrictDate> positiveTestsByDistrictDate;
+    private AVLTree<TestByRegionDate> testsByRegionDate;
+    private AVLTree<TestByRegionDate> positiveTestsByRegionDate;
+    private AVLTree<TestByDate> testsByDate;
+    private AVLTree<TestByDate> positiveTestsByDate;
     private AVLTree<TestByWorkplaceDate> testsByWorkplace;
 
     private ArrayList<Region> regions;
@@ -94,7 +94,6 @@ public class WHOSystem {
     public String showAllPersonTests(String personID) {
         Person person = this.people.find(new Person("", "", null, personID));
         if (person == null) {
-            System.out.println("Osoba s tymto id sa nenasla");
             return "Person ID was not found.";
         }
         ArrayList<TestByDate> tests = person.getTestsByDate().inOrder();
@@ -274,7 +273,7 @@ public class WHOSystem {
     public String showPositivePersonWithHighestValueFromDistricts(LocalDate date, int daysAfter) {
         PCRTest dummyTestMin, dummyTestMax;
         ArrayList<TestByDistrictDate> tests;
-        AVLTree<District> positiveCountDistrict = new AVLTree<>();
+        AVLTree<District> positiveMaxValueDistrict = new AVLTree<>();
         for (District d : this.districts) {
             int code = d.getDistrictCode();
             dummyTestMin = new PCRTest((date.minusDays(daysAfter)), null, Integer.MIN_VALUE, 0, 0, code, true, 0.0, null, null);
@@ -291,12 +290,12 @@ public class WHOSystem {
             }
             District compDistrict = new District(code);
             compDistrict.setTest(maxTest);
-            positiveCountDistrict.insert(compDistrict);
+            positiveMaxValueDistrict.insert(compDistrict);
         }
         StringBuilder output = new StringBuilder();
         output.append("People with the highest value in districts to date ").append(date).append("\n(person is positive ").append(daysAfter).append(" days after positive test).");
         output.append("\n\nDistrict code | person with highest value");
-        for (District districtMaxValue : positiveCountDistrict.inOrder()) {
+        for (District districtMaxValue : positiveMaxValueDistrict.inOrder()) {
             if (districtMaxValue.getTest() != null) {
                 output.append("\n\nDistrict ").append(districtMaxValue.getDistrictCode()).append(":\n");
                 output.append(districtMaxValue.getTest().getPerson().getPersonInfo()).append("\nTest\n").append(districtMaxValue.getTest().getTestInfo());

@@ -9,8 +9,8 @@ import java.time.LocalDate;
  * Class which represents data Person with its attributes and compare method to use in structures.
  */
 public class Person implements IBSTData<Person> {
-    private AVLTree<TestByCode> testsByCode;//1,2
-    private AVLTree<TestByDate> testsByDate;//3,
+    private AVLTree<TestByCode> testsByCode;
+    private AVLTree<TestByDate> testsByDate;
 
     private String name;
     private String surname;
