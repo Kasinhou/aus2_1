@@ -9,8 +9,8 @@ import java.util.Random;
 import java.util.Set;
 
 public class Generator {
-    private static final int PEOPLE_COUNT = 50;
-    private static final int TESTS_COUNT = 200;
+    private static final int PEOPLE_COUNT = 500;
+    private static final int TESTS_COUNT = 2000;
     private static final int REGION_COUNT = 10;
     private static final int DISTRICT_COUNT = 50;
     private static final int WORKPLACE_COUNT = 100;
@@ -30,7 +30,6 @@ public class Generator {
         this.who = who;
         this.peopleIDs = new ArrayList<>();
         this.testCodes = new HashSet<>();
-        this.connectRegionDistrictWorkplace();
     }
 
     public void generatePeople() {
@@ -47,6 +46,7 @@ public class Generator {
                 this.peopleIDs.add(personID);
             }
         }
+        System.out.println("People generated.");
     }
 
     public void generateTests() {
@@ -74,21 +74,22 @@ public class Generator {
                 System.out.println("Pri generovani testu sa zavolala metoda na insertnutie testu ale nepresla");
             }
         }
+        System.out.println("Tests generated.");
     }
 
-    private void connectRegionDistrictWorkplace() {
+    public void connectRegionDistrictWorkplace() {
         this.districtsRegion = new int[DISTRICT_COUNT + 1];
         this.workplacesDistrict = new int[WORKPLACE_COUNT + 1];
 
         for (int i = 1; i <= WORKPLACE_COUNT; ++i) {
             int randDistrict = this.random.nextInt(DISTRICT_COUNT) + 1;
             this.workplacesDistrict[i] = randDistrict;
-            this.who.addWorkplace(i, randDistrict);
+            this.who.addWorkplace(i);
         }
         for (int i = 1; i <= DISTRICT_COUNT; ++i) {
             int randRegion = this.random.nextInt(REGION_COUNT) + 1;
             this.districtsRegion[i] = randRegion;
-            this.who.addDistrict(i, randRegion);
+            this.who.addDistrict(i);
         }
         for (int i = 1; i <= REGION_COUNT; ++i) {
             this.who.addRegion(i);

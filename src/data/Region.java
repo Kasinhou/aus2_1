@@ -1,19 +1,23 @@
 package data;
 
-import structure.AVLTree;
 import structure.IBSTData;
 
 public class Region implements IBSTData<Region> {
     private int regionCode;
-    private AVLTree<TestByDate> positiveTestsByDate;
+    private int count;//could be anything
 
     public Region(int code) {
         this.regionCode = code;
-        this.positiveTestsByDate = new AVLTree<>();
+        this.count = 0;
     }
 
     @Override
     public int compareTo(Region comparedData) {
+        if (this.count < comparedData.getCount()) {
+            return -1;
+        } else if (this.count > comparedData.getCount()) {
+            return 1;
+        }
         return Integer.compare(this.regionCode, comparedData.getRegionCode());
     }
 
@@ -21,7 +25,11 @@ public class Region implements IBSTData<Region> {
         return this.regionCode;
     }
 
-    public AVLTree<TestByDate> getPositiveTestsByDate() {
-        return this.positiveTestsByDate;
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getCount() {
+        return this.count;
     }
 }

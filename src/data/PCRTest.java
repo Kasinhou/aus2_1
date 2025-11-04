@@ -80,7 +80,7 @@ public class PCRTest {
      */
     public String getTestInfo() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Test ID: ").append(this.testCode).append("\nPerson ID: ").append(this.personID);
+        sb.append("Test code: ").append(this.testCode).append("\nPerson ID: ").append(this.personID);
         sb.append("\nTest positive: ").append(this.testResult).append("\nValue: ").append(this.testValue);
         sb.append("\nDate and time: ").append(this.timeOfTest).append("\nRegion: ").append(this.region);
         sb.append("\nDistrict: ").append(this.district).append("\nWorkplace: ").append(this.workplace).append("\nNote: ").append(this.note);

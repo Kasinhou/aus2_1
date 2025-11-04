@@ -39,7 +39,7 @@ public class Controller {
                         this.view.getTestPersonID(), Integer.parseInt(this.view.getTestCode()), Integer.parseInt(this.view.getWorkplace()),
                         Integer.parseInt(this.view.getRegion()), Integer.parseInt(this.view.getDistrict()),
                         Boolean.parseBoolean(this.view.getTestResult()), Double.parseDouble(this.view.getTestValue()), this.view.getNote());
-                message = correctAddTest ? "Test successfully added." : "Test has not been added successfully.";
+                message = correctAddTest ? "Test successfully added." : "Test has not been added successfully. Duplicity code or person not found.";
                 break;
             case 2:
                 message = this.who.showTestResult(Integer.parseInt(this.view.getTestCode()), this.view.getTestPersonID());
@@ -143,6 +143,7 @@ public class Controller {
     }
 
     private void handleGenerateButton() {
+        this.generator.connectRegionDistrictWorkplace();
         this.generator.generatePeople();
         this.generator.generateTests();
     }

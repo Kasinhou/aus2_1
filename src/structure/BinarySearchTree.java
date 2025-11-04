@@ -203,7 +203,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
             BSTNode<T> nextInOrderParent = nextInOrder.getParent();
 
             // ak nie je nasledovnik priamy pravy syn
-            // ak je nasledovnik jeho syn a nema dalsich lavych tak iba posunut...
             if (nextInOrderParent != deletedNode) {
                 nextInOrderParent.setLeftSon(nextInOrderRightSon);
                 nextInOrder.setRightSon(deletedNodeRightSon);
@@ -213,6 +212,7 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                     nextInOrderRightSon.setIsLeftSon(true);
                 }
             }
+            // ak je nasledovnik jeho syn a nema dalsich lavych tak iba posunut...
             nextInOrder.setParent(deletedNodeParent);
             nextInOrder.setLeftSon(deletedNodeLeftSon);
             nextInOrder.setIsLeftSon(deletedIsLeftSon);
@@ -227,7 +227,6 @@ public class BinarySearchTree<T extends IBSTData<T>> {
                 }
             }
         }
-        // is this necessarry??
         deletedNode.setLeftSon(null);
         deletedNode.setRightSon(null);
         deletedNode.setParent(null);
