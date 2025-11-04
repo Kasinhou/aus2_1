@@ -502,7 +502,6 @@ public class WHOSystem {
         String peopleFileName = "people.csv";
         String testsFileName = "tests.csv";
         String rdwFileName = "rdw.csv";
-        System.out.println(this.regions.size() + " " + this.districts.size() + " "  + this.workplaces.size());
         try {
             BufferedReader peopleReader = new BufferedReader(new FileReader(peopleFileName));
             BufferedReader testsReader = new BufferedReader(new FileReader(testsFileName));
@@ -516,7 +515,7 @@ public class WHOSystem {
                 if (data.length == 4) {
                     this.addPerson(data[0], data[1], LocalDate.parse(data[2]), data[3]);
                 } else {
-                    System.out.println("Tento riadok osoby je nespravny: " + rowPerson);
+                    System.out.println("Incorrect person row: " + rowPerson);
                 }
             }
             peopleReader.close();
@@ -531,7 +530,7 @@ public class WHOSystem {
                             Integer.parseInt(data[3]), Integer.parseInt(data[4]), Integer.parseInt(data[5]),
                             Boolean.parseBoolean(data[6]), Double.parseDouble(data[7]), data[8]);
                 } else {
-                    System.out.println("Tento riadok testu je nespravny: " + rowTest);
+                    System.out.println("Incorrect test row: " + rowTest);
                 }
             }
             testsReader.close();
